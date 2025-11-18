@@ -1,0 +1,69 @@
+import React from 'react';
+import { View } from '../types';
+import { Home, Settings, HardDrive } from 'lucide-react';
+
+interface SidebarProps {
+    currentView: View;
+    setView: (view: View) => void;
+}
+
+const NavItem: React.FC<{
+    icon: React.ReactNode;
+    label: string;
+    isActive: boolean;
+    onClick: () => void;
+}> = ({ icon, label, isActive, onClick }) => (
+    <li>
+        <button
+            onClick={onClick}
+            className={`flex items-center p-3 my-1 w-full text-base font-normal rounded-lg transition duration-75 group ${
+                isActive 
+                ? 'bg-lime-blue-600 text-white shadow-md' 
+                : 'text-white hover:bg-lime-blue-700'
+            }`}
+        >
+            {icon}
+            <span className="ml-3 flex-1 whitespace-nowrap">{label}</span>
+        </button>
+    </li>
+);
+
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
+    return (
+        <aside className="w-64 flex-shrink-0" aria-label="Sidebar">
+            <div className="overflow-y-auto py-4 px-3 h-full bg-lime-blue-800 flex flex-col">
+                <div className="flex items-center pl-2.5 mb-5">
+                    <HardDrive className="h-8 w-8 text-lime-blue-300 mr-3" />
+                    <span className="self-center text-xl font-semibold whitespace-nowrap text-white">LIME Inventario</span>
+                </div>
+                <ul className="space-y-2 flex-1">
+                    <NavItem 
+                        icon={<Home className="w-6 h-6" />}
+                        label="Dashboard"
+                        isActive={currentView === 'dashboard'}
+                        onClick={() => setView('dashboard')}
+                    />
+                    <NavItem 
+                        icon={<Settings className="w-6 h-6" />}
+                        label="Administración"
+                        isActive={currentView === 'administration'}
+                        onClick={() => setView('administration')}
+                    />
+                </ul>
+                <div className="mt-auto p-4 text-center text-xs text-lime-blue-300">
+                   <p>Logos Corporativos</p>
+                   <div className="flex justify-around items-center mt-2 opacity-70">
+                       <span>UdeA</span>
+                       <span>LIME</span>
+                       <span>HAMA</span>
+                   </div>
+                   <p className="mt-4">&copy; 2025 LIME </p>
+                   <p>Creado por:</p>
+                   <p>Melina Villada Lopez</p>
+                   <p>Alejandra Ortega Andrade</p>
+                   <p>Juan Esteban Pineda Lopera</p>
+                </div>
+            </div>
+        </aside>
+    );
+};

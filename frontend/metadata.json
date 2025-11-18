@@ -1,0 +1,5 @@
+{
+  "name": "LIME - Gestión de Inventario Médico",
+  "description": "Una aplicación web moderna para la gestión de inventario de equipos médicos para la institución LIME, con funcionalidades para múltiples sedes, gestión de responsables, registro de equipos, bajas, traslados y manejo de documentos.",
+  "requestFramePermissions": []
+}
