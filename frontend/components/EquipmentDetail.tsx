@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Equipment, Site, Service, Responsible, Document, TransferInfo } from '../types';
-import { FileText, CheckCircle, XCircle, Calendar, ArrowRight, User, File as FileIcon, Signature } from 'lucide-react';
+import { FileText, CheckCircle, XCircle, Calendar, ArrowRight, User, File as FileIcon, Signature, Download } from 'lucide-react';
 
 interface EquipmentDetailProps {
     equipment: Equipment;
@@ -28,22 +28,65 @@ const BooleanDisplay: React.FC<{ value: boolean | undefined }> = ({ value }) => 
     value ? <CheckCircle className="w-5 h-5 text-green-500 inline-block" /> : <XCircle className="w-5 h-5 text-red-500 inline-block" />
 );
 
-const DocumentItem: React.FC<{ doc: Document }> = ({ doc }) => (
-    <div className="flex items-center justify-between p-2 border rounded-md bg-white hover:bg-slate-50 transition-colors">
-        <div className="flex items-center">
-            <FileText className="w-4 h-4 mr-2 text-lime-blue-600" />
-            <span className="font-medium text-sm">{doc.name}</span>
-        </div>
-        {doc.hasDocument ? (
-            <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full">Disponible</span>
-                {doc.fileURL && <a href={doc.fileURL} target="_blank" rel="noopener noreferrer" className="text-lime-blue-600 hover:text-lime-blue-800 p-1 rounded-full hover:bg-lime-blue-100"><FileIcon className="w-4 h-4"/></a>}
+const DocumentItem: React.FC<{ doc: Document; inventoryCode: string }> = ({ doc, inventoryCode }) => {
+    const getFileUrl = () => {
+        if (!doc.fileContent || !doc.fileType) return undefined;
+        const byteCharacters = atob(doc.fileContent.split(',')[1]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: doc.fileType });
+        return URL.createObjectURL(blob);
+    };
+
+    const fileUrl = getFileUrl();
+    const fileName = `${doc.name}-${inventoryCode}.pdf`;
+
+    const handleOpenPdf = () => {
+        if (fileUrl) {
+            const pdfWindow = window.open("", "pdf-preview", "width=800,height=600,resizable=yes,scrollbars=yes");
+            if (pdfWindow) {
+                pdfWindow.document.write(`
+                    <html>
+                        <head><title>${fileName}</title></head>
+                        <body style="margin: 0; overflow: hidden;">
+                            <iframe width='100%' height='100%' src='${fileUrl}'></iframe>
+                        </body>
+                    </html>
+                `);
+                pdfWindow.document.close();
+            }
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-between p-2 border rounded-md bg-white hover:bg-slate-50 transition-colors">
+            <div className="flex items-center">
+                <FileText className="w-4 h-4 mr-2 text-lime-blue-600" />
+                <span className="font-medium text-sm">{doc.name}</span>
             </div>
-        ) : (
-             <span className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full">No disponible</span>
-        )}
-    </div>
-);
+            {doc.hasDocument ? (
+                <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full">Disponible</span>
+                    {fileUrl && (
+                        <>
+                            <button onClick={handleOpenPdf} className="text-lime-blue-600 hover:text-lime-blue-800 p-1 rounded-full hover:bg-lime-blue-100" title="Ver en ventana emergente">
+                                <FileIcon className="w-4 h-4"/>
+                            </button>
+                            <a href={fileUrl} download={fileName} className="text-lime-blue-600 hover:text-lime-blue-800 p-1 rounded-full hover:bg-lime-blue-100" title="Descargar">
+                                <Download className="w-4 h-4" />
+                            </a>
+                        </>
+                    )}
+                </div>
+            ) : (
+                 <span className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full">No disponible</span>
+            )}
+        </div>
+    );
+};
 
 const TransferHistoryItem: React.FC<{ transfer: TransferInfo; sites: Site[]; services: Service[]; responsibles: Responsible[] }> = ({ transfer, sites, services, responsibles }) => {
     const fromSite = sites.find(s => s.id === transfer.fromSiteId)?.name || 'N/A';
@@ -134,7 +177,7 @@ export const EquipmentDetail: React.FC<EquipmentDetailProps> = ({ equipment, sit
 
             <DetailSection title="Documentos">
                 <div className="space-y-2">
-                    {documents?.map((doc, index) => <DocumentItem key={index} doc={doc} />)}
+                    {documents?.map((doc, index) => <DocumentItem key={index} doc={doc} inventoryCode={equipment.inventoryCode} />)}
                 </div>
             </DetailSection>
 

@@ -44,7 +44,42 @@ const DocumentUploader: React.FC<{ document: Document, onChange: (doc: Document)
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            onChange({ ...document, file, fileURL: URL.createObjectURL(file), hasDocument: true });
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (event.target && typeof event.target.result === 'string') {
+                    onChange({
+                        ...document,
+                        fileContent: event.target.result,
+                        fileType: file.type,
+                        hasDocument: true
+                    });
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const getFileUrl = () => {
+        if (!document.fileContent || !document.fileType) return undefined;
+        const byteCharacters = atob(document.fileContent.split(',')[1]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: document.fileType });
+        return URL.createObjectURL(blob);
+    };
+
+    const fileUrl = getFileUrl();
+
+    const handleOpenPdf = () => {
+        if (fileUrl) {
+            const pdfWindow = window.open("", "pdf-preview", "width=800,height=600,resizable=yes,scrollbars=yes");
+            if (pdfWindow) {
+                pdfWindow.document.write(`<iframe width='100%' height='100%' src='${fileUrl}'></iframe>`);
+                pdfWindow.document.title = document.name;
+            }
         }
     };
 
@@ -64,10 +99,11 @@ const DocumentUploader: React.FC<{ document: Document, onChange: (doc: Document)
                             <Upload className="w-5 h-5" />
                             <input id={`file-${document.name}`} type="file" className="hidden" accept=".pdf" onChange={handleFileChange} />
                         </label>
-                        {document.fileURL && (
+                        {fileUrl && (
                             <>
-                                <a href={document.fileURL} target="_blank" rel="noopener noreferrer" className="text-lime-blue-600 hover:text-lime-blue-800"><Eye className="w-5 h-5"/></a>
-                                <div className="w-10 h-10 border rounded"><img src="https://picsum.photos/seed/pdf/50/50" alt="thumbnail" className="object-cover w-full h-full"/></div>
+                                <button type="button" onClick={handleOpenPdf} className="text-lime-blue-600 hover:text-lime-blue-800">
+                                    <Eye className="w-5 h-5"/>
+                                </button>
                             </>
                         )}
                     </>

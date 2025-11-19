@@ -20,8 +20,8 @@ export interface Responsible {
 export interface Document {
     name: string;
     hasDocument: boolean;
-    file?: File;
-    fileURL?: string;
+    fileContent?: string;
+    fileType?: string;
 }
 
 export interface DecommissionInfo {
