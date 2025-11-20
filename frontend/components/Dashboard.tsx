@@ -1,12 +1,17 @@
 
-import React, { useState, useMemo } from 'react';
-import { Equipment, Site, Service, Responsible } from '../types';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Equipment, Site, Service, Responsible, EquipmentFilters } from '../types';
 import { Modal } from './Modal';
 import { EquipmentForm, emptyEquipment } from './EquipmentForm';
 import { PlusCircle, Edit, Move, Trash2, Eye } from 'lucide-react';
 import { DecommissionForm } from './DecommissionForm';
 import { TransferForm } from './TransferForm';
 import { EquipmentDetail } from './EquipmentDetail';
+import { Tooltip } from './Tooltip';
+import { EmptyState } from './EmptyState';
+import { Breadcrumbs } from './Breadcrumbs';
+import { AdvancedFilters } from './AdvancedFilters';
+import { applyFilters, getUniqueBrands } from '../utils/filters';
 
 interface DashboardProps {
     equipments: Equipment[];
@@ -17,6 +22,9 @@ interface DashboardProps {
     onDecommission: (equipmentId: string, date: string, reason: string) => void;
     onTransfer: (equipmentId: string, newSiteId: number, newServiceId: number, newResponsibleId: number, justification: string, signature: string) => void;
     searchQuery: string;
+    filters: EquipmentFilters;
+    onFiltersChange: (filters: EquipmentFilters) => void;
+    onClearFilters: () => void;
 }
 
 const StatusBadge: React.FC<{ status: Equipment['status'] }> = ({ status }) => {
@@ -29,7 +37,7 @@ const StatusBadge: React.FC<{ status: Equipment['status'] }> = ({ status }) => {
     return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
 };
 
-export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, services, responsibles, onSaveEquipment, onDecommission, onTransfer, searchQuery }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, services, responsibles, onSaveEquipment, onDecommission, onTransfer, searchQuery, filters, onFiltersChange, onClearFilters }) => {
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDecommissionModalOpen, setIsDecommissionModalOpen] = useState(false);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
@@ -85,87 +93,231 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
         setSelectedEquipment(null);
     };
 
+    // Obtener marcas únicas para el filtro
+    const uniqueBrands = useMemo(() => getUniqueBrands(equipments), [equipments]);
+
+    // Aplicar filtros y búsqueda
     const filteredEquipments = useMemo(() => {
-        if (!searchQuery) return equipments;
-        const lowercasedQuery = searchQuery.toLowerCase();
-        return equipments.filter(eq =>
-            eq.name.toLowerCase().includes(lowercasedQuery) ||
-            eq.brand.toLowerCase().includes(lowercasedQuery) ||
-            eq.model.toLowerCase().includes(lowercasedQuery) ||
-            eq.inventoryCode.toLowerCase().includes(lowercasedQuery)
-        );
-    }, [equipments, searchQuery]);
+        return applyFilters(equipments, filters, searchQuery);
+    }, [equipments, filters, searchQuery]);
+
+    // Estado para animación de resultados
+    const [isFiltering, setIsFiltering] = useState(false);
+    
+    useEffect(() => {
+        setIsFiltering(true);
+        const timer = setTimeout(() => setIsFiltering(false), 300);
+        return () => clearTimeout(timer);
+    }, [filteredEquipments.length]);
 
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-slate-800">Dashboard de Equipos</h1>
+            <Breadcrumbs 
+                items={[
+                    { label: 'Dashboard', onClick: undefined }
+                ]}
+            />
+            
+            {/* Panel de Filtros Avanzados */}
+            <AdvancedFilters
+                filters={filters}
+                onFiltersChange={onFiltersChange}
+                onClearFilters={onClearFilters}
+                sites={sites}
+                services={services}
+                responsibles={responsibles}
+                brands={uniqueBrands}
+                resultCount={filteredEquipments.length}
+                totalCount={equipments.length}
+            />
+
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">Dashboard de Equipos</h1>
+                    <p className="text-xs sm:text-sm text-gray-500">Gestiona y administra tu inventario de equipos médicos</p>
+                </div>
                 <button 
                     onClick={handleAddNew}
-                    className="flex items-center bg-lime-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-lime-green-700 transition duration-300 shadow-sm"
+                    aria-label="Registrar nuevo equipo"
+                    className="flex items-center justify-center bg-blue-600 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                    <PlusCircle className="mr-2 h-5 w-5" />
-                    Registrar Equipo
+                    <PlusCircle className="mr-2 h-5 w-5" aria-hidden="true" />
+                    <span className="hidden sm:inline">Registrar Equipo</span>
+                    <span className="sm:hidden">Registrar</span>
                 </button>
             </div>
 
-            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código Inventario</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Equipo</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marca / Modelo</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sede / Servicio</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                            <th scope="col" className="relative px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {filteredEquipments.length > 0 ? filteredEquipments.map(equipment => {
-                            const siteName = sites.find(s => s.id === equipment.siteId)?.name || 'N/A';
-                            const serviceName = services.find(s => s.id === equipment.serviceId)?.name || 'N/A';
-                            const isInactive = equipment.status === 'Inactivo';
+            {/* Vista de tabla para desktop */}
+            <div className="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-100">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gradient-to-r from-blue-50 to-blue-50/50">
+                            <tr>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código Inventario</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Nombre Equipo</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Marca / Modelo</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Sede / Servicio</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Estado</th>
+                                <th scope="col" className="relative px-4 lg:px-6 py-3 lg:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className={`bg-white divide-y divide-gray-100 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+                            {filteredEquipments.length > 0 ? filteredEquipments.map((equipment, index) => {
+                                const siteName = sites.find(s => s.id === equipment.siteId)?.name || 'N/A';
+                                const serviceName = services.find(s => s.id === equipment.serviceId)?.name || 'N/A';
+                                const isInactive = equipment.status === 'Inactivo';
 
-                            return (
-                                <tr key={equipment.id} className={`transition-colors ${isInactive ? 'bg-slate-50 text-slate-500' : 'hover:bg-slate-50'}`}>
-                                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isInactive ? 'text-slate-500' : 'text-gray-900'}`}>{equipment.inventoryCode}</td>
-                                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isInactive ? 'text-slate-500' : 'text-gray-700'}`}>{equipment.name}</td>
-                                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isInactive ? 'text-slate-400' : 'text-gray-500'}`}>{equipment.brand} / {equipment.model}</td>
-                                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isInactive ? 'text-slate-400' : 'text-gray-500'}`}>{siteName} / {serviceName}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <StatusBadge status={equipment.status} />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <div className="flex items-center justify-end space-x-2">
-                                            <button onClick={() => handleViewDetails(equipment)} title="Ver detalles" className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"><Eye className="h-4 w-4" /></button>
-                                            <button onClick={() => handleEdit(equipment)} title="Editar" className="p-2 text-lime-blue-600 hover:bg-lime-blue-100 rounded-full transition-colors"><Edit className="h-4 w-4" /></button>
-                                            <button 
-                                                onClick={() => handleOpenTransfer(equipment)} 
-                                                title="Trasladar" 
-                                                disabled={isInactive}
-                                                className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-full transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed">
-                                                <Move className="h-4 w-4" />
-                                            </button>
-                                            <button 
-                                                onClick={() => handleOpenDecommission(equipment)} 
-                                                title="Dar de baja" 
-                                                disabled={isInactive}
-                                                className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed">
-                                                <Trash2 className="h-4 w-4" />
-                                            </button>
+                                return (
+                                    <tr 
+                                        key={equipment.id} 
+                                        className={`transition-all duration-150 animate-fade-in ${isInactive ? 'bg-gray-50/50 text-gray-400' : 'hover:bg-blue-50/50 hover:shadow-sm'}`}
+                                        style={{ animationDelay: `${index * 0.03}s` }}
+                                    >
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm font-semibold ${isInactive ? 'text-gray-400' : 'text-gray-900'}`}>{equipment.inventoryCode}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm font-medium ${isInactive ? 'text-gray-400' : 'text-gray-800'}`}>{equipment.name}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.brand} / {equipment.model}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{siteName} / {serviceName}</td>
+                                        <td className="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap">
+                                            <StatusBadge status={equipment.status} />
+                                        </td>
+                                        <td className="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div className="flex items-center justify-end space-x-1" role="group" aria-label={`Acciones para ${equipment.name}`}>
+                                                <Tooltip text="Ver detalles">
+                                                    <button 
+                                                        onClick={() => handleViewDetails(equipment)} 
+                                                        aria-label={`Ver detalles de ${equipment.name}`}
+                                                        className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                                        <Eye className="h-4 w-4" aria-hidden="true" />
+                                                    </button>
+                                                </Tooltip>
+                                                <Tooltip text="Editar equipo">
+                                                    <button 
+                                                        onClick={() => handleEdit(equipment)} 
+                                                        aria-label={`Editar ${equipment.name}`}
+                                                        className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                                        <Edit className="h-4 w-4" aria-hidden="true" />
+                                                    </button>
+                                                </Tooltip>
+                                                <Tooltip text={isInactive ? "Equipo inactivo, no se puede trasladar" : "Trasladar equipo"}>
+                                                    <button 
+                                                        onClick={() => handleOpenTransfer(equipment)} 
+                                                        aria-label={`Trasladar ${equipment.name}`}
+                                                        disabled={isInactive}
+                                                        aria-disabled={isInactive}
+                                                        className="p-1.5 sm:p-2 text-amber-600 hover:bg-amber-100 hover:text-amber-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:text-gray-300 disabled:hover:bg-transparent disabled:hover:scale-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                                        <Move className="h-4 w-4" aria-hidden="true" />
+                                                    </button>
+                                                </Tooltip>
+                                                <Tooltip text={isInactive ? "Equipo ya está dado de baja" : "Dar de baja equipo"}>
+                                                    <button 
+                                                        onClick={() => handleOpenDecommission(equipment)} 
+                                                        aria-label={`Dar de baja ${equipment.name}`}
+                                                        disabled={isInactive}
+                                                        aria-disabled={isInactive}
+                                                        className="p-1.5 sm:p-2 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:text-gray-300 disabled:hover:bg-transparent disabled:hover:scale-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                                                    </button>
+                                                </Tooltip>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            }) : (
+                                <tr>
+                                    <td colSpan={6} className="p-0">
+                                        <div className={`p-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+                                            <EmptyState 
+                                                type="search"
+                                                action={searchQuery ? undefined : {
+                                                    label: 'Registrar Primer Equipo',
+                                                    onClick: handleAddNew
+                                                }}
+                                            />
                                         </div>
                                     </td>
                                 </tr>
-                            );
-                        }) : (
-                            <tr>
-                                <td colSpan={6} className="text-center py-10 text-gray-500">No se encontraron equipos que coincidan con la búsqueda.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Vista de tarjetas para móvil */}
+            <div className={`md:hidden space-y-4 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+                {filteredEquipments.length > 0 ? filteredEquipments.map((equipment, index) => {
+                    const siteName = sites.find(s => s.id === equipment.siteId)?.name || 'N/A';
+                    const serviceName = services.find(s => s.id === equipment.serviceId)?.name || 'N/A';
+                    const isInactive = equipment.status === 'Inactivo';
+
+                    return (
+                        <div 
+                            key={equipment.id}
+                            className={`bg-white rounded-lg shadow-md border border-gray-200 p-4 animate-fade-in ${isInactive ? 'opacity-60' : ''}`}
+                            style={{ animationDelay: `${index * 0.05}s` }}
+                        >
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="flex-1">
+                                    <h3 className={`text-base font-semibold ${isInactive ? 'text-gray-400' : 'text-gray-900'} mb-1`}>{equipment.name}</h3>
+                                    <p className="text-xs text-gray-500 font-mono">{equipment.inventoryCode}</p>
+                                </div>
+                                <StatusBadge status={equipment.status} />
+                            </div>
+                            
+                            <div className="space-y-2 mb-4 text-sm">
+                                <div>
+                                    <span className="text-gray-500">Marca/Modelo: </span>
+                                    <span className={isInactive ? 'text-gray-400' : 'text-gray-800'}>{equipment.brand} / {equipment.model}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500">Ubicación: </span>
+                                    <span className={isInactive ? 'text-gray-400' : 'text-gray-800'}>{siteName} / {serviceName}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-200" role="group" aria-label={`Acciones para ${equipment.name}`}>
+                                <button 
+                                    onClick={() => handleViewDetails(equipment)} 
+                                    aria-label={`Ver detalles de ${equipment.name}`}
+                                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                    <Eye className="h-5 w-5" aria-hidden="true" />
+                                </button>
+                                <button 
+                                    onClick={() => handleEdit(equipment)} 
+                                    aria-label={`Editar ${equipment.name}`}
+                                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                    <Edit className="h-5 w-5" aria-hidden="true" />
+                                </button>
+                                <button 
+                                    onClick={() => handleOpenTransfer(equipment)} 
+                                    aria-label={`Trasladar ${equipment.name}`}
+                                    disabled={isInactive}
+                                    aria-disabled={isInactive}
+                                    className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                    <Move className="h-5 w-5" aria-hidden="true" />
+                                </button>
+                                <button 
+                                    onClick={() => handleOpenDecommission(equipment)} 
+                                    aria-label={`Dar de baja ${equipment.name}`}
+                                    disabled={isInactive}
+                                    aria-disabled={isInactive}
+                                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                    <Trash2 className="h-5 w-5" aria-hidden="true" />
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }) : (
+                    <div className={`transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+                        <EmptyState 
+                            type={equipments.length === 0 ? "empty" : "search"}
+                            action={equipments.length === 0 ? {
+                                label: 'Registrar Primer Equipo',
+                                onClick: handleAddNew
+                            } : undefined}
+                        />
+                    </div>
+                )}
             </div>
 
             {isFormModalOpen && (

@@ -38,6 +38,8 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
         }
     };
 
+    const selectedResponsible = responsibles.find(r => r.id === newResponsibleId);
+
     if (showPdf) {
         return <PdfPreview 
             equipment={equipment}
@@ -45,8 +47,12 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
             originService={serviceOrigin}
             destinationSite={sites.find(s => s.id === newSiteId)?.name || 'N/A'}
             destinationService={services.find(s => s.id === newServiceId)?.name || 'N/A'}
-            responsible={responsibles.find(r => r.id === newResponsibleId)?.name || 'N/A'}
+            responsible={selectedResponsible?.name || 'N/A'}
+            responsibleRole={selectedResponsible?.role}
             justification={justification}
+            sites={sites}
+            services={services}
+            responsibles={responsibles}
             onConfirm={(signature) => onConfirm(newSiteId, newServiceId, newResponsibleId, justification, signature)}
             onBack={() => setShowPdf(false)}
         />
@@ -90,8 +96,21 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
             </div>
 
             <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
-                <button type="button" onClick={onCancel} className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
-                <button type="submit" className="bg-lime-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-lime-green-700">Generar PDF y Trasladar</button>
+                <button 
+                    type="button" 
+                    onClick={onCancel}
+                    aria-label="Cancelar traslado de equipo"
+                    className="bg-gray-200 text-gray-800 font-semibold py-2.5 px-6 rounded-lg hover:bg-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit"
+                    aria-label="Generar PDF y confirmar traslado del equipo"
+                    className="bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Generar PDF y Trasladar
+                </button>
             </div>
         </form>
     );

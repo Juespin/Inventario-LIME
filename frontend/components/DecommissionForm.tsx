@@ -45,8 +45,21 @@ export const DecommissionForm: React.FC<DecommissionFormProps> = ({ equipmentNam
                 />
             </div>
             <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
-                <button type="button" onClick={onCancel} className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
-                <button type="submit" className="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">Confirmar Baja</button>
+                <button 
+                    type="button" 
+                    onClick={onCancel}
+                    aria-label="Cancelar operación de baja"
+                    className="bg-gray-200 text-gray-800 font-semibold py-2.5 px-6 rounded-lg hover:bg-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit"
+                    aria-label={`Confirmar baja del equipo ${equipmentName}`}
+                    className="bg-red-600 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                    Confirmar Baja
+                </button>
             </div>
         </form>
     );

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Site, Service, Responsible } from '../types';
+import { Breadcrumbs } from './Breadcrumbs';
 
 type AdminTab = 'sites' | 'services' | 'responsibles';
 
@@ -8,7 +9,7 @@ const TabButton: React.FC<{ label: string; isActive: boolean; onClick: () => voi
   <button
     onClick={onClick}
     className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 ${
-      isActive ? 'border-lime-blue-600 text-lime-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+      isActive ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
     }`}
   >
     {label}
@@ -19,11 +20,17 @@ const SiteManager: React.FC<{ sites: Site[]; onAdd: (name: string) => void }> = 
     const [name, setName] = useState('');
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); onAdd(name); setName(''); }} className="flex gap-2 mb-4">
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre de la nueva sede" className="p-2 border rounded-md flex-grow" required/>
-                <button type="submit" className="bg-lime-green-600 text-white font-bold py-2 px-4 rounded-lg">Agregar</button>
+            <form onSubmit={e => { e.preventDefault(); onAdd(name); setName(''); }} className="flex flex-col sm:flex-row gap-3 mb-6">
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre de la nueva sede" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
+                <button 
+                    type="submit" 
+                    aria-label="Agregar nuevo elemento"
+                    className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Agregar
+                </button>
             </form>
-            <ul className="space-y-2">{sites.map(s => <li key={s.id} className="p-3 bg-white border rounded-md">{s.name}</li>)}</ul>
+            <ul className="space-y-2">{sites.map(s => <li key={s.id} className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-200 transition-colors font-medium">{s.name}</li>)}</ul>
         </div>
     );
 };
@@ -32,15 +39,21 @@ const ServiceManager: React.FC<{ services: Service[]; sites: Site[]; onAdd: (nam
     const [siteId, setSiteId] = useState<number>(0);
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); onAdd(name, siteId); setName(''); setSiteId(0); }} className="flex gap-2 mb-4">
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre del nuevo servicio" className="p-2 border rounded-md flex-grow" required/>
-                <select value={siteId} onChange={e => setSiteId(parseInt(e.target.value))} className="p-2 border rounded-md" required>
+            <form onSubmit={e => { e.preventDefault(); onAdd(name, siteId); setName(''); setSiteId(0); }} className="flex flex-col sm:flex-row gap-3 mb-6">
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre del nuevo servicio" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
+                <select value={siteId} onChange={e => setSiteId(parseInt(e.target.value))} className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required>
                     <option value={0}>Seleccione Sede</option>
                     {sites.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
-                <button type="submit" className="bg-lime-green-600 text-white font-bold py-2 px-4 rounded-lg">Agregar</button>
+                <button 
+                    type="submit" 
+                    aria-label="Agregar nuevo elemento"
+                    className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Agregar
+                </button>
             </form>
-            <ul className="space-y-2">{services.map(s => <li key={s.id} className="p-3 bg-white border rounded-md">{s.name} <span className="text-xs text-gray-500">({sites.find(site => site.id === s.siteId)?.name})</span></li>)}</ul>
+            <ul className="space-y-2">{services.map(s => <li key={s.id} className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-200 transition-colors"><span className="font-medium">{s.name}</span> <span className="text-xs text-gray-500">({sites.find(site => site.id === s.siteId)?.name})</span></li>)}</ul>
         </div>
     );
 };
@@ -49,12 +62,18 @@ const ResponsibleManager: React.FC<{ responsibles: Responsible[]; onAdd: (name: 
     const [role, setRole] = useState('');
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); onAdd(name, role); setName(''); setRole(''); }} className="flex gap-2 mb-4">
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre del responsable" className="p-2 border rounded-md flex-grow" required/>
-                <input value={role} onChange={e => setRole(e.target.value)} placeholder="Cargo" className="p-2 border rounded-md flex-grow" required/>
-                <button type="submit" className="bg-lime-green-600 text-white font-bold py-2 px-4 rounded-lg">Agregar</button>
+            <form onSubmit={e => { e.preventDefault(); onAdd(name, role); setName(''); setRole(''); }} className="flex flex-col sm:flex-row gap-3 mb-6">
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre del responsable" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
+                <input value={role} onChange={e => setRole(e.target.value)} placeholder="Cargo" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
+                <button 
+                    type="submit" 
+                    aria-label="Agregar nuevo elemento"
+                    className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Agregar
+                </button>
             </form>
-            <ul className="space-y-2">{responsibles.map(r => <li key={r.id} className="p-3 bg-white border rounded-md">{r.name} <span className="text-xs text-gray-500">({r.role})</span></li>)}</ul>
+            <ul className="space-y-2">{responsibles.map(r => <li key={r.id} className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-200 transition-colors"><span className="font-medium">{r.name}</span> <span className="text-xs text-gray-500">({r.role})</span></li>)}</ul>
         </div>
     );
 };
@@ -69,16 +88,21 @@ export const AdminPanel: React.FC<{
     const [activeTab, setActiveTab] = useState<AdminTab>('sites');
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold text-slate-800 mb-4">Panel de Administración</h1>
-            <div className="border-b border-gray-200">
-                <nav className="-mb-px flex space-x-4" aria-label="Tabs">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100">
+            <Breadcrumbs 
+                items={[
+                    { label: 'Panel de Administración', onClick: undefined }
+                ]}
+            />
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 sm:mb-6">Panel de Administración</h1>
+            <div className="border-b border-gray-200 overflow-x-auto">
+                <nav className="-mb-px flex space-x-2 sm:space-x-4 min-w-max sm:min-w-0" aria-label="Tabs">
                     <TabButton label="Sedes" isActive={activeTab === 'sites'} onClick={() => setActiveTab('sites')} />
                     <TabButton label="Servicios" isActive={activeTab === 'services'} onClick={() => setActiveTab('services')} />
                     <TabButton label="Responsables" isActive={activeTab === 'responsibles'} onClick={() => setActiveTab('responsibles')} />
                 </nav>
             </div>
-            <div className="pt-6">
+            <div className="pt-4 sm:pt-6">
                 {activeTab === 'sites' && <SiteManager sites={sites} onAdd={onAddSite} />}
                 {activeTab === 'services' && <ServiceManager services={services} sites={sites} onAdd={onAddService} />}
                 {activeTab === 'responsibles' && <ResponsibleManager responsibles={responsibles} onAdd={onAddResponsible} />}

@@ -12,7 +12,7 @@ interface EquipmentDetailProps {
 
 const DetailSection: React.FC<{ title: string; children: React.ReactNode; }> = ({ title, children }) => (
     <div className="mb-6">
-        <h3 className="text-lg font-semibold text-lime-blue-800 border-b-2 border-lime-blue-200 pb-2 mb-3">{title}</h3>
+        <h3 className="text-lg font-semibold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3">{title}</h3>
         <div className="space-y-3">{children}</div>
     </div>
 );
@@ -64,7 +64,7 @@ const DocumentItem: React.FC<{ doc: Document; inventoryCode: string }> = ({ doc,
     return (
         <div className="flex items-center justify-between p-2 border rounded-md bg-white hover:bg-slate-50 transition-colors">
             <div className="flex items-center">
-                <FileText className="w-4 h-4 mr-2 text-lime-blue-600" />
+                <FileText className="w-4 h-4 mr-2 text-blue-600" />
                 <span className="font-medium text-sm">{doc.name}</span>
             </div>
             {doc.hasDocument ? (
@@ -72,10 +72,10 @@ const DocumentItem: React.FC<{ doc: Document; inventoryCode: string }> = ({ doc,
                     <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full">Disponible</span>
                     {fileUrl && (
                         <>
-                            <button onClick={handleOpenPdf} className="text-lime-blue-600 hover:text-lime-blue-800 p-1 rounded-full hover:bg-lime-blue-100" title="Ver en ventana emergente">
+                            <button onClick={handleOpenPdf} className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100" title="Ver en ventana emergente">
                                 <FileIcon className="w-4 h-4"/>
                             </button>
-                            <a href={fileUrl} download={fileName} className="text-lime-blue-600 hover:text-lime-blue-800 p-1 rounded-full hover:bg-lime-blue-100" title="Descargar">
+                            <a href={fileUrl} download={fileName} className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100" title="Descargar">
                                 <Download className="w-4 h-4" />
                             </a>
                         </>
@@ -106,7 +106,7 @@ const TransferHistoryItem: React.FC<{ transfer: TransferInfo; sites: Site[]; ser
                     <p className="font-semibold">{fromSite}</p>
                     <p className="text-xs text-gray-500">{fromService}</p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-lime-blue-500 mx-4 flex-shrink-0" />
+                <ArrowRight className="w-5 h-5 text-blue-500 mx-4 flex-shrink-0" />
                 <div className="text-center">
                     <p className="font-semibold">{toSite}</p>
                     <p className="text-xs text-gray-500">{toService}</p>

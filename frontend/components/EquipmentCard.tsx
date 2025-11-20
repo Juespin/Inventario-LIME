@@ -48,21 +48,21 @@ export const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, siteNam
 
                 <div className="space-y-2 text-sm text-gray-600 flex-grow">
                     <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-2 text-lime-blue-600" />
+                        <MapPin className="w-4 h-4 mr-2 text-blue-600" />
                         <span>{siteName}</span>
                     </div>
                     <div className="flex items-center">
-                        <Briefcase className="w-4 h-4 mr-2 text-lime-blue-600" />
+                        <Briefcase className="w-4 h-4 mr-2 text-blue-600" />
                         <span>{serviceName}</span>
                     </div>
                     <div className="flex items-center">
-                        <User className="w-4 h-4 mr-2 text-lime-blue-600" />
+                        <User className="w-4 h-4 mr-2 text-blue-600" />
                         <span>{responsible?.name || 'No asignado'}</span>
                     </div>
                 </div>
 
                 <div className="border-t mt-4 pt-3 flex justify-between items-center">
-                    <button onClick={() => onEdit(equipment)} className="text-sm text-lime-blue-600 hover:underline">Ver más</button>
+                    <button onClick={() => onEdit(equipment)} className="text-sm text-blue-600 hover:underline">Ver más</button>
                     <div className="relative">
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-full hover:bg-gray-100">
                             <ChevronDown className="h-5 w-5 text-gray-600" />

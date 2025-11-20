@@ -85,23 +85,23 @@ const DocumentUploader: React.FC<{ document: Document, onChange: (doc: Document)
 
     return (
         <div className="flex items-center justify-between p-3 border rounded-md mb-2 bg-white hover:bg-slate-50">
-            <span className="font-medium text-sm flex items-center"><FileText className="w-4 h-4 mr-2 text-lime-blue-600" />{document.name}</span>
+            <span className="font-medium text-sm flex items-center"><FileText className="w-4 h-4 mr-2 text-blue-600" />{document.name}</span>
             <div className="flex items-center space-x-3">
                 <span className="text-sm">¿Tiene documento?</span>
                  <label className="inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={document.hasDocument} onChange={(e) => onChange({...document, hasDocument: e.target.checked})} className="sr-only peer" />
-                    <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-lime-blue-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lime-green-600"></div>
+                    <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
 
                 {document.hasDocument && (
                     <>
-                        <label htmlFor={`file-${document.name}`} className="cursor-pointer text-lime-blue-600 hover:text-lime-blue-800">
+                        <label htmlFor={`file-${document.name}`} className="cursor-pointer text-blue-600 hover:text-blue-800">
                             <Upload className="w-5 h-5" />
                             <input id={`file-${document.name}`} type="file" className="hidden" accept=".pdf" onChange={handleFileChange} />
                         </label>
                         {fileUrl && (
                             <>
-                                <button type="button" onClick={handleOpenPdf} className="text-lime-blue-600 hover:text-lime-blue-800">
+                                <button type="button" onClick={handleOpenPdf} className="text-blue-600 hover:text-blue-800">
                                     <Eye className="w-5 h-5"/>
                                 </button>
                             </>
@@ -123,7 +123,7 @@ const FormInput: React.FC<{ label: string; name: string; value: any; onChange: a
             value={value || ''}
             onChange={onChange}
             placeholder={placeholder || label}
-            className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500"
+            className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500"
         />
     </div>
 );
@@ -136,7 +136,7 @@ const FormCheckbox: React.FC<{ label: string; name: string; checked: boolean; on
             id={name}
             checked={!!checked}
             onChange={onChange}
-            className="h-4 w-4 text-lime-blue-600 border-gray-300 rounded focus:ring-lime-blue-500"
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
         <label htmlFor={name} className="ml-2 block text-sm text-gray-900">{label}</label>
     </div>
@@ -281,7 +281,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="status" 
                                 value={formData.status} 
                                 onChange={handleChange} 
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value="">             Seleccione Estado </option>
                             <option value="Activo">       Activo            </option>
                             <option value="Inactivo">     Inactivo          </option>
@@ -300,7 +300,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                             value={option} 
                                             onChange={handleMisionalClassificationChange} 
                                             checked={formData.generalInfo?.misionalClassification?.includes(option)} 
-                                            className="h-4 w-4 text-lime-blue-600 border-gray-300 rounded focus:ring-lime-blue-500" />
+                                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                                     <label htmlFor={option} className="ml-2 block text-sm text-gray-900">{option}</label>
                                 </div>
                             ))}
@@ -313,7 +313,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="riskClassification" 
                                 value={formData.riskClassification}
                                 onChange={handleChange}
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value={0}>Seleccione Clasificación de Riesgo</option>
                             <option value="N/A">      No aplica</option>
                             <option value="Clase I">  Clase I  </option>
@@ -330,7 +330,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="ipsClassification" 
                                 value={formData.ipsClassification}
                                 onChange={handleChange}
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value={0}>Seleccione Clasificación en la IPS</option>
                             <option value="N/A">      IND      </option>
                             <option value="Clase I">  BIO      </option>
@@ -356,7 +356,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 },
                             }))
                             }
-                            className="h-4 w-4 text-lime-blue-600 border-gray-300 rounded focus:ring-lime-blue-500"
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <label htmlFor="noAplica" className="text-sm text-gray-900">
                             No aplica
@@ -398,7 +398,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                 </div>
             </div>
             
-            <button type="button" onClick={() => setShowMore(!showMore)} className="text-lime-blue-600 hover:underline font-medium flex items-center gap-1">
+            <button type="button" onClick={() => setShowMore(!showMore)} className="text-blue-600 hover:underline font-medium flex items-center gap-1">
                 {showMore ? <><ChevronUp size={16}/> Ocultar Ficha Técnica</> : <><ChevronDown size={16}/> Ver más (Ficha Técnica)</>}
             </button>
 
@@ -451,7 +451,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                             </ul>
                              <div className="flex gap-2">
                                 <input type="text" value={newLogEntry} onChange={e => setNewLogEntry(e.target.value)} placeholder="Nueva entrada en la bitácora..." className="p-2 border border-gray-300 rounded-md w-full" />
-                                <button type="button" onClick={handleAddLog} className="bg-lime-blue-600 text-white p-2 rounded-lg hover:bg-lime-blue-700 flex items-center"><Plus size={18}/></button>
+                                <button type="button" onClick={handleAddLog} className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 flex items-center"><Plus size={18}/></button>
                             </div>
                         </div>
                     </Section>
@@ -464,9 +464,35 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormCheckbox label="Requiere Mantenimiento" name="maintenance" checked={formData.metrologicalAdminInfo?.maintenance} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
                             <FormInput label="Frecuencia Mantenimiento (meses)" name="maintenanceFrequency" type="number" value={formData.metrologicalAdminInfo?.maintenanceFrequency} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
-                             <FormCheckbox label="Requiere Calibración" name="calibration" checked={formData.metrologicalAdminInfo?.calibration} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
+                            <FormInput 
+                                label="Última Fecha de Mantenimiento" 
+                                name="lastMaintenanceDate" 
+                                type="date" 
+                                value={formData.metrologicalAdminInfo?.lastMaintenanceDate || ''} 
+                                onChange={e => handleSectionChange('metrologicalAdminInfo', e)} 
+                                placeholder="YYYY-MM-DD"
+                            />
+                            
+                            <div className="md:col-span-2"></div>
+                            
+                            <FormCheckbox label="Requiere Calibración" name="calibration" checked={formData.metrologicalAdminInfo?.calibration} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
                             <FormInput label="Frecuencia Calibración (meses)" name="calibrationFrequency" type="number" value={formData.metrologicalAdminInfo?.calibrationFrequency} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
+                            <FormInput 
+                                label="Última Fecha de Calibración" 
+                                name="lastCalibrationDate" 
+                                type="date" 
+                                value={formData.metrologicalAdminInfo?.lastCalibrationDate || ''} 
+                                onChange={e => handleSectionChange('metrologicalAdminInfo', e)} 
+                                placeholder="YYYY-MM-DD"
+                            />
                         </div>
+                        {(formData.metrologicalAdminInfo?.maintenance || formData.metrologicalAdminInfo?.calibration) && (
+                            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p className="text-sm text-blue-800">
+                                    <strong>Nota:</strong> Si no se especifica la última fecha, se usará la fecha de adquisición del equipo para calcular la próxima fecha de mantenimiento/calibración.
+                                </p>
+                            </div>
+                        )}
                     </Section>
                     <Section title="Información Metrológica Técnica">
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -492,8 +518,21 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
             )}
             
             <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
-                <button type="button" onClick={onCancel} className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
-                <button type="submit" className="bg-lime-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-lime-green-700">Guardar</button>
+                <button 
+                    type="button" 
+                    onClick={onCancel}
+                    aria-label="Cancelar y cerrar formulario"
+                    className="bg-gray-200 text-gray-800 font-semibold py-2.5 px-6 rounded-lg hover:bg-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit"
+                    aria-label="Guardar cambios del equipo"
+                    className="bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Guardar
+                </button>
             </div>
         </form>
     );
