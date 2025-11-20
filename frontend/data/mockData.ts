@@ -50,6 +50,14 @@ export const mockEquipments: Equipment[] = [
               '2023-06-20: Calibración anual completada.'
             ]
         },
+        metrologicalAdminInfo: {
+            maintenance: true,
+            maintenanceFrequency: 6,
+            lastMaintenanceDate: '2025-05-01', // Último hace ~6.5 meses, próxima sería 2025-11-01 (VENCIDO - hace 18 días)
+            calibration: true,
+            calibrationFrequency: 12,
+            lastCalibrationDate: '2025-10-25' // Última hace ~25 días, próxima sería 2026-10-25 (PROGRAMADO - >30 días)
+        },
         operatingConditions: {
             voltage: '110-240V',
             dimensions: '40x30x20 cm'
@@ -70,7 +78,18 @@ export const mockEquipments: Equipment[] = [
         documents: [
             { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
             { name: 'Manual de usuario', hasDocument: false },
-        ]
+        ],
+        historicalRecord: {
+            acquisitionDate: '2021-03-15'
+        },
+        metrologicalAdminInfo: {
+            maintenance: true,
+            maintenanceFrequency: 3,
+            lastMaintenanceDate: '2025-09-05', // Último hace ~2.5 meses, próxima sería 2025-12-05 (PRÓXIMO - en 16 días)
+            calibration: true,
+            calibrationFrequency: 6,
+            lastCalibrationDate: '2025-10-28' // Última hace ~22 días, próxima sería 2026-04-28 (PROGRAMADO - >30 días)
+        }
     },
     {
         id: 'EQ-003',
@@ -86,7 +105,18 @@ export const mockEquipments: Equipment[] = [
         imageUrl: 'https://picsum.photos/seed/hema/400/300',
         documents: [
             { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
-        ]
+        ],
+        historicalRecord: {
+            acquisitionDate: '2023-01-20'
+        },
+        metrologicalAdminInfo: {
+            maintenance: true,
+            maintenanceFrequency: 6,
+            lastMaintenanceDate: '2025-10-20', // Último hace ~30 días, próxima sería 2026-04-20 (PROGRAMADO - >30 días)
+            calibration: true,
+            calibrationFrequency: 12,
+            lastCalibrationDate: '2025-11-05' // Última hace ~14 días, próxima sería 2026-11-05 (PRÓXIMO - en ~30 días, límite)
+        }
     },
     {
         id: 'EQ-004',
@@ -104,6 +134,15 @@ export const mockEquipments: Equipment[] = [
             { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
             { name: 'Manual de usuario', hasDocument: true, fileURL: '#' },
             { name: 'Protocolo de mantenimiento', hasDocument: true, fileURL: '#' },
-        ]
+        ],
+        historicalRecord: {
+            acquisitionDate: '2023-08-10'
+        },
+        metrologicalAdminInfo: {
+            maintenance: true,
+            maintenanceFrequency: 12,
+            lastMaintenanceDate: '2025-11-15', // Último hace ~4 días, próxima sería 2026-11-15 (PROGRAMADO - >30 días)
+            calibration: false
+        }
     },
 ];
