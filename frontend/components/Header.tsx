@@ -62,14 +62,14 @@ export const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery, onM
             
             {/* Segunda fila: Notificaciones y usuario */}
             <div className="flex items-center justify-end space-x-3 sm:space-x-4">
-                <button 
+                {/* <button 
                     className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" 
                     aria-label="Notificaciones"
                     aria-describedby="notification-badge"
                 >
                     <Bell className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
                     <span id="notification-badge" className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" aria-label="Tienes notificaciones sin leer"></span>
-                </button>
+                </button> */}
                 <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-3 border-l border-gray-200" role="region" aria-label="Perfil de usuario">
                     <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0" aria-hidden="true">
                         <UserCircle className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />

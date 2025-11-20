@@ -61,13 +61,15 @@ export interface Equipment {
         ecriCode?: string;
         processResponsible?: string;
         physicalLocation?: string;
-        misionalClassification?: string;
+        misionalClassification?: string[];
         ipsClassification?: string;
         riskClassification?: string;
         invimaRecord?: string;
+        comercializationPermit?: string;
+        noAplica?: boolean;
     };
     historicalRecord?: {
-        usefulLife?: string;
+        usefulLife?: number;
         acquisitionDate?: string;
         owner?: string;
         fabricationDate?: string;
@@ -91,9 +93,11 @@ export interface Equipment {
     };
     metrologicalTechnicalInfo?: {
         magnitude?: string;
-        equipmentRange?: string;
+        equipmentRangeMin?: number;
+        equipmentRangeMax?: number;
         resolution?: string;
-        workRange?: string;
+        workRangeMin?: number;
+        workRangeMax?: number;
         maxPermittedError?: string;
     };
     operatingConditions?: {

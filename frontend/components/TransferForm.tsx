@@ -109,7 +109,7 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
                     aria-label="Generar PDF y confirmar traslado del equipo"
                     className="bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                    Generar PDF y Trasladar
+                    Siguiente
                 </button>
             </div>
         </form>

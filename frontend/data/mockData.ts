@@ -28,23 +28,46 @@ export const mockEquipments: Equipment[] = [
         name: 'Electrocardiógrafo',
         brand: 'Philips',
         model: 'PageWriter TC30',
-        serial: 'PH-12345',
-        inventoryCode: 'HAMA-CARD-001',
+        serial: 'PH12345',
+        inventoryCode: '135305',
         status: 'Activo',
         siteId: 1,
         serviceId: 1,
         responsibleId: 1,
         imageUrl: 'https://picsum.photos/seed/ecg/400/300',
         documents: [
-            { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
-            { name: 'Manual de usuario', hasDocument: true, fileURL: '#' },
-            { name: 'Protocolo de mantenimiento', hasDocument: false },
-            { name: 'Guía rápida', hasDocument: false },
+          { name: 'Hoja de vida', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+          { name: 'Registro de Importación', hasDocument: false },
+          { name: 'Manual de operación', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+          { name: 'Manual de servicio de mantenimiento', hasDocument: false },
+          { name: 'Guía rápida de uso', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYjogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+          { name: 'Instructivo de manejo rápido de equipos', hasDocument: false },
+          { name: 'Protocolo de mantenimiento preventivo', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+          { name: 'Frecuencia metrológica según fabricante', hasDocument: false },
         ],
-        generalInfo: {},
+        generalInfo: {
+            ipsCode: 'IPS-001',
+            ecriCode: 'ECRI-001',
+            physicalLocation: 'Sala de Cardiología, Piso 2',
+            misionalClassification: ['Docencia', 'Investigación'],
+            riskClassification: 'Clase IIa',
+            ipsClassification: 'BIO',
+            noAplica: false,
+            invimaRecord: 'INVIMA-2022-123456',
+            comercializationPermit: 'PERMISO-2022-ABCDE',
+        },
         historicalRecord: {
+            usefulLife: 10,
             acquisitionDate: '2022-05-10',
+            owner: 'HAMA - Sede Principal',
+            fabricationDate: '2022-01-15',
             provider: 'Medtronic',
+            nit: '890.903.938-1',
+            inWarranty: true,
+            warrantyEndDate: '2025-05-10',
+            acquisitionMethod: 'Compra directa',
+            documentType: 'Factura',
+            documentNumber: 'F-2022-789',
             log: [
               '2023-01-15: Mantenimiento preventivo realizado.',
               '2023-06-20: Calibración anual completada.'
@@ -53,14 +76,28 @@ export const mockEquipments: Equipment[] = [
         metrologicalAdminInfo: {
             maintenance: true,
             maintenanceFrequency: 6,
-            lastMaintenanceDate: '2025-05-01', // Último hace ~6.5 meses, próxima sería 2025-11-01 (VENCIDO - hace 18 días)
+            lastMaintenanceDate: '2025-05-01',
             calibration: true,
             calibrationFrequency: 12,
-            lastCalibrationDate: '2025-10-25' // Última hace ~25 días, próxima sería 2026-10-25 (PROGRAMADO - >30 días)
+            lastCalibrationDate: '2025-10-25'
+        },
+        metrologicalTechnicalInfo: {
+            magnitude: 'Tensión Eléctrica',
+            equipmentRangeMin: 0.05,
+            equipmentRangeMax: 300,
+            resolution: '0.01 mV',
+            workRangeMin: 1,
+            workRangeMax: 150,
+            maxPermittedError: '±1%',
         },
         operatingConditions: {
             voltage: '110-240V',
-            dimensions: '40x30x20 cm'
+            current: '1.5A',
+            relativeHumidity: '20% - 80%',
+            temperature: '10°C - 40°C',
+            dimensions: '40x30x20 cm',
+            weight: '5 kg',
+            otherConditions: 'Requiere conexión a tierra.'
         }
     },
     {
@@ -68,27 +105,67 @@ export const mockEquipments: Equipment[] = [
         name: 'Máquina de Rayos X',
         brand: 'Siemens',
         model: 'Multix Fusion Max',
-        serial: 'SM-67890',
-        inventoryCode: 'HAMA-RAYX-001',
+        serial: 'SM67890',
+        inventoryCode: '135306',
         status: 'Activo',
         siteId: 1,
         serviceId: 2,
         responsibleId: 2,
         imageUrl: 'https://picsum.photos/seed/xray/400/300',
         documents: [
-            { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
-            { name: 'Manual de usuario', hasDocument: false },
+            { name: 'Hoja de vida', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+            { name: 'Registro de Importación', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+            { name: 'Manual de operación', hasDocument: false },
         ],
+        generalInfo: {
+            ipsCode: 'IPS-002',
+            ecriCode: 'ECRI-002',
+            physicalLocation: 'Sala de Rayos X, Sótano 1',
+            misionalClassification: ['Extensión'],
+            riskClassification: 'Clase IIb',
+            ipsClassification: 'BIO',
+            noAplica: false,
+            invimaRecord: 'INVIMA-2021-654321',
+            comercializationPermit: 'PERMISO-2021-ZYXWV',
+        },
         historicalRecord: {
-            acquisitionDate: '2021-03-15'
+            usefulLife: 15,
+            acquisitionDate: '2021-03-15',
+            owner: 'HAMA - Sede Principal',
+            fabricationDate: '2020-12-01',
+            provider: 'Siemens Healthineers',
+            nit: '890.903.938-2',
+            inWarranty: false,
+            acquisitionMethod: 'Leasing',
+            documentType: 'Contrato de Leasing',
+            documentNumber: 'L-2021-456',
+            log: ['2024-08-01: Cambio de tubo de rayos X.']
         },
         metrologicalAdminInfo: {
             maintenance: true,
             maintenanceFrequency: 3,
-            lastMaintenanceDate: '2025-09-05', // Último hace ~2.5 meses, próxima sería 2025-12-05 (PRÓXIMO - en 16 días)
+            lastMaintenanceDate: '2025-09-05',
             calibration: true,
             calibrationFrequency: 6,
-            lastCalibrationDate: '2025-10-28' // Última hace ~22 días, próxima sería 2026-04-28 (PROGRAMADO - >30 días)
+            lastCalibrationDate: '2025-10-28'
+        },
+        metrologicalTechnicalInfo: {
+            magnitude: 'Radiación Ionizante',
+            equipmentRangeMin: 20,
+            equipmentRangeMax: 150,
+            resolution: '1 kV',
+            workRangeMin: 40,
+            workRangeMax: 120,
+            maxPermittedError: '±5%',
+        },
+        operatingConditions: {
+            voltage: '220-480V 3-phase',
+            current: '100A',
+            relativeHumidity: '30% - 75%',
+            temperature: '15°C - 30°C',
+            dimensions: '200x180x220 cm',
+            weight: '800 kg',
+            otherConditions: 'Requiere sala con blindaje de plomo.'
         }
     },
     {
@@ -96,26 +173,64 @@ export const mockEquipments: Equipment[] = [
         name: 'Analizador de Hematología',
         brand: 'Roche',
         model: 'Cobas 8000',
-        serial: 'RC-11223',
-        inventoryCode: 'LIME-HEMA-001',
+        serial: 'RC11223',
+        inventoryCode: '135307',
         status: 'Mantenimiento',
         siteId: 2,
         serviceId: 4,
         responsibleId: 3,
         imageUrl: 'https://picsum.photos/seed/hema/400/300',
         documents: [
-            { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
+            { name: 'Hoja de vida', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
         ],
+        generalInfo: {
+            ipsCode: 'IPS-003',
+            ecriCode: 'ECRI-003',
+            physicalLocation: 'Laboratorio Principal, Sección Hematología',
+            misionalClassification: ['Docencia'],
+            riskClassification: 'Clase I',
+            ipsClassification: 'Gases',
+            noAplica: true,
+        },
         historicalRecord: {
-            acquisitionDate: '2023-01-20'
+            usefulLife: 8,
+            acquisitionDate: '2023-01-20',
+            owner: 'LIME - Laboratorio Central',
+            fabricationDate: '2022-10-01',
+            provider: 'Roche Diagnostics',
+            nit: '890.903.938-3',
+            inWarranty: true,
+            warrantyEndDate: '2026-01-20',
+            acquisitionMethod: 'Donación',
+            documentType: 'Acta de Donación',
+            documentNumber: 'AD-2023-123',
+            log: []
         },
         metrologicalAdminInfo: {
             maintenance: true,
             maintenanceFrequency: 6,
-            lastMaintenanceDate: '2025-10-20', // Último hace ~30 días, próxima sería 2026-04-20 (PROGRAMADO - >30 días)
+            lastMaintenanceDate: '2025-10-20',
             calibration: true,
             calibrationFrequency: 12,
-            lastCalibrationDate: '2025-11-05' // Última hace ~14 días, próxima sería 2026-11-05 (PRÓXIMO - en ~30 días, límite)
+            lastCalibrationDate: '2025-11-05'
+        },
+        metrologicalTechnicalInfo: {
+            magnitude: 'Conteo Celular',
+            equipmentRangeMin: 0,
+            equipmentRangeMax: 100000,
+            resolution: '10 células/µL',
+            workRangeMin: 100,
+            workRangeMax: 50000,
+            maxPermittedError: '±3%',
+        },
+        operatingConditions: {
+            voltage: '100-240V',
+            current: '3A',
+            relativeHumidity: '40% - 60%',
+            temperature: '18°C - 25°C',
+            dimensions: '80x60x70 cm',
+            weight: '120 kg',
+            otherConditions: 'Requiere reactivos específicos.'
         }
     },
     {
@@ -123,26 +238,66 @@ export const mockEquipments: Equipment[] = [
         name: 'Secuenciador de ADN',
         brand: 'Illumina',
         model: 'NovaSeq 6000',
-        serial: 'IL-44556',
-        inventoryCode: 'UDEA-BIOM-001',
+        serial: 'IL44556',
+        inventoryCode: '135308',
         status: 'Activo',
         siteId: 3,
         serviceId: 6,
         responsibleId: 4,
         imageUrl: 'https://picsum.photos/seed/dna/400/300',
         documents: [
-            { name: 'Hoja de vida', hasDocument: true, fileURL: '#' },
-            { name: 'Manual de usuario', hasDocument: true, fileURL: '#' },
-            { name: 'Protocolo de mantenimiento', hasDocument: true, fileURL: '#' },
+            { name: 'Hoja de vida', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+            { name: 'Manual de usuario', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
+            { name: 'Protocolo de mantenimiento', hasDocument: true, fileContent: 'data:application/pdf;base64,JVBERi0xLjQKJSAgCiAgMSAwIG9iagogIDw8IC9UeXBlIC9DYXRhbG9nCiAgICAgL1BhZ2VzIDIgMCBSCiAgPj4KICBlbmRvYmoKICAKICAgMiAwIG9iagogIDw8IC9UeXBlIC9QYWdlcwogICAgICAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQogICAgICAvQ291bnQgMQogICAgICAvS2lkcyBbIDMgMCBSIF0KICA+PgogIGVuZG9iagogIAogIDMgMCBvYmogCiAgPDwgL1R5cGUgL1BhZ2UKICAgICAgL1BhcmVudCAyIDAgUgogICAgICAvUmVzb3VyY2VzCiAgPDwgL0ZvbnQKICAgICAgPDwgL0YxIDQgMCBSID4+CiAgICA+PgogICAgICAvQ29udGVudHMgNSAwIFIKICA+PgogIGVuZG9iagogIAogIDQgMCBvYmogCiAgPDwgL1R5cGUgL0ZvbnQKICAgICAgL1N1YnR5cGUgL1R5cGUxCiAgICAgIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KICA+PgogIGVuZG9iagogIAogIDUgMCBvYmogCiAgPDwgL0xlbmd0aCA1NSA+PgogIHN0cmVhbQogIEJU CiAgL0YxIDEyIFRmIAogIDUwIDUwIFRkIAogIChIZWxsbyBXb3JsZCkgVGoKICBFVAogIGVuZHN0cmVhbQogIGVuZG9iagogIAp4cmVmCiAgMCA2CiAgMDAwMDAwMDAwMCA2NTUzNSBmIAogIDAwMDAwMDAwMTggMDAwMDAgbiAKICAwMDAwMDAwMDc3IDAwMDAwIG4gCiAgMDAwMDAwMDE3OCAwMDAwMCBuIAogIDAwMDAwMDAzMDIgMDAwMDAgbiAKICAwMDAwMDAzODkgMDAwMDAgbiAKdHJhaWxlcgogIDw8IC9TaXplIDYKICAgICAgL1Jvb3QgMSAwIFIKICA+PgpzdGFydHhyZWYKNDk0CiUlRU9G', fileType: 'application/pdf' },
         ],
+        generalInfo: {
+            ipsCode: 'IPS-004',
+            ecriCode: 'ECRI-004',
+            physicalLocation: 'Laboratorio de Genómica, Sala 3',
+            misionalClassification: ['Investigación'],
+            riskClassification: 'N/A',
+            ipsClassification: 'IND',
+            noAplica: false,
+            invimaRecord: 'INVIMA-2023-789012',
+            comercializationPermit: 'PERMISO-2023-PQRST',
+        },
         historicalRecord: {
-            acquisitionDate: '2023-08-10'
+            usefulLife: 7,
+            acquisitionDate: '2023-08-10',
+            owner: 'UdeA - Sede Investigación',
+            fabricationDate: '2023-05-01',
+            provider: 'Illumina Inc.',
+            nit: '890.903.938-4',
+            inWarranty: true,
+            warrantyEndDate: '2026-08-10',
+            acquisitionMethod: 'Compra directa',
+            documentType: 'Factura',
+            documentNumber: 'F-2023-987',
+            log: []
         },
         metrologicalAdminInfo: {
             maintenance: true,
             maintenanceFrequency: 12,
-            lastMaintenanceDate: '2025-11-15', // Último hace ~4 días, próxima sería 2026-11-15 (PROGRAMADO - >30 días)
+            lastMaintenanceDate: '2025-11-15',
             calibration: false
+        },
+        metrologicalTechnicalInfo: {
+            magnitude: 'Secuenciación de Nucleótidos',
+            equipmentRangeMin: 1,
+            equipmentRangeMax: 6000,
+            resolution: '1 base',
+            workRangeMin: 50,
+            workRangeMax: 5000,
+            maxPermittedError: 'Q30 > 80%',
+        },
+        operatingConditions: {
+            voltage: '200-240V',
+            current: '16A',
+            relativeHumidity: '20% - 80%',
+            temperature: '19°C - 25°C',
+            dimensions: '120x90x150 cm',
+            weight: '450 kg',
+            otherConditions: 'Requiere ambiente controlado y libre de polvo.'
         }
     },
 ];

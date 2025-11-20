@@ -139,39 +139,34 @@ export const EquipmentDetail: React.FC<EquipmentDetailProps> = ({ equipment, sit
 
             <DetailSection title="Información General">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                    <DetailItem label="Proceso" value={generalInfo?.process} />
+                    <DetailItem label="Proceso" 
+                                value={`${sites.find(s => s.id === equipment?.siteId)?.name ?? ''} - ${services.find(s => s.id === equipment?.serviceId)?.name ?? '' }`} />
                     <DetailItem label="Código IPS" value={generalInfo?.ipsCode} />
                     <DetailItem label="Código ECRI" value={generalInfo?.ecriCode} />
-                    <DetailItem label="Responsable del Proceso" value={generalInfo?.processResponsible} />
+                    <DetailItem label="Responsable del Proceso" 
+                                value={responsibles.find(r => r.id === equipment?.responsibleId)?.name ?? ''} />
                     <DetailItem label="Ubicación Física" value={generalInfo?.physicalLocation} />
-                    <DetailItem label="Clasificación Misional" value={generalInfo?.misionalClassification} />
+                    <DetailItem label="Clasificación Misional" value={Array.isArray(generalInfo?.misionalClassification) ? generalInfo.misionalClassification.join(', ') : generalInfo?.misionalClassification} />
                     <DetailItem label="Clasificación IPS" value={generalInfo?.ipsClassification} />
                     <DetailItem label="Clasificación por Riesgo" value={generalInfo?.riskClassification} />
-                    <DetailItem label="Registro Invima" value={generalInfo?.invimaRecord} />
+                    <DetailItem label="Registro Invima" value={generalInfo?.noAplica ? 'N/A' : generalInfo?.invimaRecord} />
+                    <DetailItem label="Permiso de comercialización" value={generalInfo?.noAplica ? 'N/A' : generalInfo?.comercializationPermit} />
                 </div>
             </DetailSection>
 
             <DetailSection title="Registro Histórico">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                    <DetailItem label="Tiempo de Vida Útil" value={historicalRecord?.usefulLife} />
+                    <DetailItem label="Tiempo de Vida Útil" value={historicalRecord?.usefulLife ? `${historicalRecord.usefulLife} años` : undefined} />
                     <DetailItem label="Fecha de Adquisición" value={historicalRecord?.acquisitionDate} />
                     <DetailItem label="Propietario" value={historicalRecord?.owner} />
                     <DetailItem label="Fecha de Fabricación" value={historicalRecord?.fabricationDate} />
                     <DetailItem label="NIT Proveedor" value={historicalRecord?.nit} />
                     <DetailItem label="Proveedor" value={historicalRecord?.provider} />
                     <DetailItem label="En Garantía" value={<BooleanDisplay value={historicalRecord?.inWarranty} />} />
-                    <DetailItem label="Fin de Garantía" value={historicalRecord?.warrantyEndDate} />
+                    {historicalRecord?.inWarranty && <DetailItem label="Fin de Garantía" value={historicalRecord?.warrantyEndDate} />}
                     <DetailItem label="Forma de Adquisición" value={historicalRecord?.acquisitionMethod} />
                     <DetailItem label="Tipo de Documento" value={historicalRecord?.documentType} />
                     <DetailItem label="Número de Documento" value={historicalRecord?.documentNumber} />
-                 </div>
-                 <div className="mt-4">
-                    <h4 className="text-sm font-medium text-gray-500 mb-2">Bitácora</h4>
-                    <div className="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-md bg-slate-50">
-                        {historicalRecord?.log?.length ? historicalRecord.log.map((entry, i) => (
-                            <p key={i} className="text-xs text-gray-700 border-b pb-1 last:border-b-0">{entry}</p>
-                        )) : <p className="text-xs text-gray-400 italic">No hay entradas en la bitácora.</p>}
-                    </div>
                  </div>
             </DetailSection>
 
@@ -183,19 +178,21 @@ export const EquipmentDetail: React.FC<EquipmentDetailProps> = ({ equipment, sit
 
             <DetailSection title="Información Metrológica">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div className="grid gap-y-3">
                         <h4 className="font-semibold text-base text-slate-700 mb-2">Administrativa</h4>
                         <DetailItem label="Requiere Mantenimiento" value={<BooleanDisplay value={metrologicalAdminInfo?.maintenance} />} />
                         <DetailItem label="Frec. Mantenimiento" value={metrologicalAdminInfo?.maintenanceFrequency ? `${metrologicalAdminInfo.maintenanceFrequency} meses` : undefined} />
+                        <DetailItem label="Último Mantenimiento" value={metrologicalAdminInfo?.lastMaintenanceDate} />
                         <DetailItem label="Requiere Calibración" value={<BooleanDisplay value={metrologicalAdminInfo?.calibration} />} />
                         <DetailItem label="Frec. Calibración" value={metrologicalAdminInfo?.calibrationFrequency ? `${metrologicalAdminInfo.calibrationFrequency} meses` : undefined} />
+                        <DetailItem label="Última Calibración" value={metrologicalAdminInfo?.lastCalibrationDate} />
                     </div>
-                    <div>
+                    <div className="grid gap-y-3">
                         <h4 className="font-semibold text-base text-slate-700 mb-2">Técnica</h4>
                         <DetailItem label="Magnitud" value={metrologicalTechnicalInfo?.magnitude} />
-                        <DetailItem label="Rango del Equipo" value={metrologicalTechnicalInfo?.equipmentRange} />
+                        <DetailItem label="Rango del equipo" value={metrologicalTechnicalInfo?.equipmentRangeMin !== undefined && metrologicalTechnicalInfo?.equipmentRangeMax !== undefined ? `${metrologicalTechnicalInfo.equipmentRangeMin} - ${metrologicalTechnicalInfo.equipmentRangeMax}` : 'N/A'} />
                         <DetailItem label="Resolución" value={metrologicalTechnicalInfo?.resolution} />
-                        <DetailItem label="Rango de Trabajo" value={metrologicalTechnicalInfo?.workRange} />
+                        <DetailItem label="Rango de trabajo" value={metrologicalTechnicalInfo?.workRangeMin !== undefined && metrologicalTechnicalInfo?.workRangeMax !== undefined ? `${metrologicalTechnicalInfo.workRangeMin} - ${metrologicalTechnicalInfo.workRangeMax}` : 'N/A'} />
                         <DetailItem label="Error Máximo Permitido" value={metrologicalTechnicalInfo?.maxPermittedError} />
                     </div>
                 </div>

@@ -123,6 +123,54 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
         };
     }, [isSigning]);
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && file.type === 'image/png') {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const dataUrl = reader.result as string;
+                setSignatureData(dataUrl);
+
+                // Dibuja la imagen en el canvas para la vista previa
+                const canvas = canvasRef.current;
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        const img = new Image();
+                        img.onload = () => {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            // Dibuja la imagen manteniendo la relación de aspecto
+                            const aspectRatio = img.width / img.height;
+                            let newWidth = canvas.width;
+                            let newHeight = newWidth / aspectRatio;
+                            if (newHeight > canvas.height) {
+                                newHeight = canvas.height;
+                                newWidth = newHeight * aspectRatio;
+                            }
+                            const xOffset = (canvas.width - newWidth) / 2;
+                            const yOffset = (canvas.height - newHeight) / 2;
+                            ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
+                        };
+                        img.src = dataUrl;
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Por favor, selecciona un archivo de imagen en formato PNG.');
+            // Limpiar el valor del input para permitir seleccionar el mismo archivo de nuevo
+            if(event.target) {
+                event.target.value = '';
+            }
+        }
+    };
+
+    const triggerFileUpload = () => {
+        fileInputRef.current?.click();
+    };
+
     const clearSignature = () => {
         const canvas = canvasRef.current;
         if (canvas) {
@@ -131,6 +179,10 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 setSignatureData('');
             }
+        }
+        // También limpiar el input de archivo
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
         }
     };
     
@@ -489,10 +541,14 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                                 className="h-20 sm:h-24 w-auto object-contain"
                             />
                         </div>
-                        <div className="text-left flex-1">
-                            <h1 className="text-2xl sm:text-3xl font-bold text-blue-800">UNIVERSIDAD DE ANTIOQUIA</h1>
-                            <p className="text-sm sm:text-base text-gray-700 mt-1">Facultad de Ingeniería</p>
-                            <p className="text-xs sm:text-sm text-gray-600 mt-1">LIME - Laboratorio de Ingeniería Médica</p>
+
+                        {/* Logo LIME */}
+                        <div className="flex justify-end flex-1">
+                            <img 
+                                src="/assets/lime.png" 
+                                alt="Logo LIME" 
+                                className="h-20 sm:h-24 w-auto object-contain"
+                            />
                         </div>
                     </div>
                     <div className="mt-4">
@@ -583,7 +639,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                         <section className="bg-amber-50 border border-amber-300 p-4 rounded-lg">
                             <h3 className="font-semibold text-amber-900 mb-2">Historial de Traslados Anteriores</h3>
                             <p className="text-xs text-amber-800">
-                                Este equipo ha sido trasladado {equipment.transferHistory.length} vez{equipment.transferHistory.length > 1 ? 'es' : ''} anteriormente.
+                                Este equipo ha sido trasladado {equipment.transferHistory.length} ve{equipment.transferHistory.length > 1 ? 'ces' : 'z'} anteriormente.
                             </p>
                 </section>
                     )}
@@ -668,14 +724,32 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                                 ></canvas>
                             </div>
                             <div className="flex justify-between items-center mt-2">
-                                <button 
-                                    type="button" 
-                                    onClick={clearSignature} 
-                                    className="text-xs text-gray-500 hover:text-gray-700 hover:underline transition-colors"
-                                    aria-label="Limpiar firma"
-                                >
-                                    Limpiar firma
-                                </button>
+                                <div className="flex items-center gap-4">
+                                    <button 
+                                        type="button" 
+                                        onClick={clearSignature} 
+                                        className="text-xs text-gray-500 hover:text-gray-700 hover:underline transition-colors"
+                                        aria-label="Limpiar firma"
+                                    >
+                                        Limpiar firma
+                                    </button>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileUpload}
+                                        accept="image/png"
+                                        className="hidden"
+                                        aria-label="Subir archivo de firma"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={triggerFileUpload}
+                                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                                        aria-label="Subir firma en formato PNG"
+                                    >
+                                        Subir Firma (PNG)
+                                    </button>
+                                </div>
                                 {responsibleRole && (
                                     <p className="text-xs text-gray-600">{responsibleRole}</p>
                                 )}

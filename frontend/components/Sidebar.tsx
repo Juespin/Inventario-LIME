@@ -93,19 +93,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, isOpen, 
                         </ul>
                     </nav>
                     
-                    <div className="mt-auto p-3 sm:p-4 text-center text-xs text-green-600 hidden lg:block">
-                   <div className="flex justify-around items-center mt-4">
-                        <img src="/assets/lime.png" alt="Logo LIME" className="h-8 sm:h-10" />
-                        <img src="/assets/hama.png" alt="Logo HAMA" className="h-8 sm:h-10" />
-                   </div>
-                   <div className="flex justify-around items-center mt-4">
-                        <img src="/assets/udea.png" alt="Logo UdeA" className="h-12 sm:h-15" />
-                   </div>
-                   <p className="mt-4">&copy; 2025 Facultad de Ingeniería de la UdeA </p>
-                   <p className="mt-1">Creado por:</p>
-                   <p className="mt-1">Melina Villada Lopez</p>
-                   <p className="mt-1">Alejandra Ortega Andrade</p>
-                   <p className="mt-1">Juan Esteban Pineda Lopera</p>
+                    <div className="mt-auto p-3 sm:p-4 text-center text-xs text-green-600">
+                        <div className="flex justify-around items-center mt-4">
+                                <img src="/assets/lime.png" alt="Logo LIME" className="sm:h-14" />
+                            </div>
+
+                        <div className="flex justify-around items-center mt-4">
+                                <img src="/assets/hama.png" alt="Logo HAMA" className="h-8 sm:h-10" /> 
+                        </div>
+                                    
+                        <div className="flex justify-around items-center mt-4">
+                                <img src="/assets/udea.png" alt="Logo UdeA" className="h-12 sm:h-15" />
+                        </div>
+                        <p className="mt-4">&copy; Creado por:</p>
+                        <p className="mt-1">Melina Villada Lopez</p>
+                        <p className="mt-1">Alejandra Ortega Andrade</p>
+                        <p className="mt-1">Juan Esteban Pineda Lopera</p>
                     </div>
                 </div>
             </aside>

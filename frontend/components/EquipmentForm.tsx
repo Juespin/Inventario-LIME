@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Equipment, Site, Service, Responsible, Document } from '../types';
 import { ChevronDown, ChevronUp, FileText, Upload, Eye, Trash2, Plus } from 'lucide-react';
 
@@ -16,9 +16,13 @@ export const emptyEquipment: Equipment = {
     status: 'Activo', siteId: 0, serviceId: 0, responsibleId: 0, imageUrl: `https://picsum.photos/seed/${Date.now()}/400/300`,
     documents: [
       { name: 'Hoja de vida', hasDocument: false },
-      { name: 'Manual de usuario', hasDocument: false },
-      { name: 'Protocolo de mantenimiento', hasDocument: false },
-      { name: 'Guía rápida', hasDocument: false },
+      { name: 'Registro de Importación', hasDocument: false },
+      { name: 'Manual de operación', hasDocument: false },
+      { name: 'Manual de servicio de mantenimiento', hasDocument: false },
+      { name: 'Guía rápida de uso', hasDocument: false },
+      { name: 'Instructivo de manejo rápido de equipos', hasDocument: false },
+      { name: 'Protocolo de mantenimiento preventivo', hasDocument: false },
+      { name: 'Frecuencia metrológica según fabricante', hasDocument: false },
     ],
     generalInfo: {}, 
     historicalRecord: { log: [] }, 
@@ -144,97 +148,106 @@ const FormCheckbox: React.FC<{ label: string; name: string; checked: boolean; on
 
 
 export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave, onCancel, sites, services, responsibles }) => {
-    const [formData, setFormData] = useState<Equipment>(equipment);
-    const [showMore, setShowMore] = useState(false);
-    const [filteredServices, setFilteredServices] = useState<Service[]>([]);
-    const [newLogEntry, setNewLogEntry] = useState('');
+  const [formData, setFormData] = useState<Equipment>(equipment);
+  const [showMore, setShowMore] = useState(false);
+  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
+  const [newLogEntry, setNewLogEntry] = useState('');
+  const [hasDocument, setHasDocument] = useState(!!equipment?.document);
+  const formRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        setFormData(equipment)
-    }, [equipment]);
-    
-    useEffect(() => {
-        if (formData.siteId) {
-            setFilteredServices(services.filter(s => s.siteId === formData.siteId));
-        } else {
-            setFilteredServices([]);
-        }
-    }, [formData.siteId, services]);
+  useEffect(() => {
+    setFormData(equipment)
+  }, [equipment]);
+  
+  useEffect(() => {
+    if (formData.siteId) {
+      setFilteredServices(services.filter(s => s.siteId === formData.siteId));
+    } else {
+      setFilteredServices([]);
+    }
+  }, [formData.siteId, services]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        if (name === 'serial' || name === 'inventoryCode') {
-            const numericValue = value.replace(/[^0-9]/g, '');
-            setFormData(prev => ({ ...prev, [name]: numericValue }));
-        } else {
-            setFormData(prev => ({ ...prev, [name]: name.endsWith('Id') ? parseInt(value) : value }));
-        }
-    };
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [hasDocument]);
 
-    const handleSectionChange = (section: keyof Equipment, e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [section]: {
-                // @ts-ignore
-                ...prev[section],
-                [name]: type === 'checkbox' ? checked : value,
-            }
-        }));
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (name === 'serial' || name === 'inventoryCode') {
+      const numericValue = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({ ...prev, [name]: numericValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: name.endsWith('Id') ? parseInt(value) : value }));
+    }
+  };
 
-    const handleMisionalClassificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value, checked } = e.target;
+  const handleSectionChange = (section: keyof Equipment, e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
         // @ts-ignore
-        const currentClassification = formData.generalInfo?.misionalClassification || [];
-        let newClassification;
+        ...prev[section],
+        [name]: type === 'checkbox' ? checked : value,
+      }
+    }));
+  };
 
-        if (checked) {
-            // @ts-ignore
-            newClassification = [...currentClassification, value];
-        } else {
-            // @ts-ignore
-            newClassification = currentClassification.filter((item: string) => item !== value);
+  const handleMisionalClassificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    // @ts-ignore
+    const currentClassification = formData.generalInfo?.misionalClassification || [];
+    let newClassification;
+
+    if (checked) {
+      // @ts-ignore
+      newClassification = [...currentClassification, value];
+    } else {
+      // @ts-ignore
+      newClassification = currentClassification.filter((item: string) => item !== value);
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      generalInfo: {
+        // @ts-ignore
+        ...prev.generalInfo,
+        misionalClassification: newClassification,
+      }
+    }));
+  };
+
+  const handleAddLog = () => {
+    if (newLogEntry.trim()) {
+      const entry = `${new Date().toLocaleDateString('es-ES')}: ${newLogEntry.trim()}`;
+      const newLog = [...(formData.historicalRecord?.log || []), entry];
+      setFormData(prev => ({
+        ...prev,
+        historicalRecord: {
+          ...prev.historicalRecord,
+          log: newLog
         }
+      }));
+      setNewLogEntry('');
+    }
+  };
 
-        setFormData(prev => ({
-            ...prev,
-            generalInfo: {
-                // @ts-ignore
-                ...prev.generalInfo,
-                misionalClassification: newClassification,
-            }
-        }));
-    };
+  const handleDocChange = (index: number, updatedDoc: Document) => {
+    const newDocs = [...(formData.documents || [])];
+    newDocs[index] = updatedDoc;
+    setFormData(prev => ({...prev, documents: newDocs}));
+  };
 
-    const handleAddLog = () => {
-        if (newLogEntry.trim()) {
-            const entry = `${new Date().toLocaleDateString('es-ES')}: ${newLogEntry.trim()}`;
-            const newLog = [...(formData.historicalRecord?.log || []), entry];
-            setFormData(prev => ({
-                ...prev,
-                historicalRecord: {
-                    ...prev.historicalRecord,
-                    log: newLog
-                }
-            }));
-            setNewLogEntry('');
-        }
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
 
-    const handleDocChange = (index: number, updatedDoc: Document) => {
-        const newDocs = [...(formData.documents || [])];
-        newDocs[index] = updatedDoc;
-        setFormData(prev => ({...prev, documents: newDocs}));
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSave(formData);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl mx-auto my-8 relative" ref={formRef}>
+      <form onSubmit={handleSubmit} className="space-y-4">
             <div className="p-4 border rounded-md bg-white">
                  <h3 className="font-semibold text-lg mb-3">Información Básica</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -291,7 +304,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
 
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Clasificación Misional</label>
-                        <div className="flex flex-row space-x-36">
+                        <div className="flex flex-row space-x-24">
                             {['Docencia', 'Investigación', 'Extensión'].map(option => (
                                 <div key={option} className="flex items-center">
                                     {/* @ts-ignore */}
@@ -311,8 +324,8 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                         <label htmlFor="riskClassification" className="block text-sm font-medium text-gray-700 mb-1">Clasificación por Riesgo</label>
                         <select name="riskClassification" 
                                 id="riskClassification" 
-                                value={formData.riskClassification}
-                                onChange={handleChange}
+                                value={formData.generalInfo?.riskClassification}
+                                onChange={(e) => handleSectionChange('generalInfo', e)}
                                 className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value={0}>Seleccione Clasificación de Riesgo</option>
                             <option value="N/A">      No aplica</option>
@@ -328,8 +341,8 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                         <label htmlFor="ipsClassification" className="block text-sm font-medium text-gray-700 mb-1">Clasificación en la IPS</label>
                         <select name="ipsClassification" 
                                 id="ipsClassification" 
-                                value={formData.ipsClassification}
-                                onChange={handleChange}
+                                value={formData.generalInfo?.ipsClassification}
+                                onChange={(e) => handleSectionChange('generalInfo', e)}
                                 className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value={0}>Seleccione Clasificación en la IPS</option>
                             <option value="N/A">      IND      </option>
@@ -428,41 +441,47 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                             <FormInput label="Fecha de Fabricación" name="fabricationDate" type="date" value={formData.historicalRecord?.fabricationDate} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Proveedor" name="provider" value={formData.historicalRecord?.provider} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="NIT del Proveedor" name="nit" value={formData.historicalRecord?.nit} onChange={e => handleSectionChange('historicalRecord', e)} />
-                            <FormCheckbox label="En Garantía" name="inWarranty" checked={formData.historicalRecord?.inWarranty} onChange={e => handleSectionChange('historicalRecord', e)} />
                             
-                            
-                            {formData.historicalRecord?.inWarranty && (
-                                <FormInput  label="Fin de Garantía" 
-                                        name="warrantyEndDate" 
-                                        type="date" 
-                                        value={formData.historicalRecord?.warrantyEndDate} 
-                                        onChange={e => handleSectionChange('historicalRecord', e)} />)}
+                            <div className="flex items-center gap-4">
+                                <FormCheckbox
+                                    label="En Garantía"
+                                    name="inWarranty"
+                                    checked={formData.historicalRecord?.inWarranty}
+                                    onChange={(e) => handleSectionChange("historicalRecord", e)}
+                                />
+
+                                <div className="h-14 transition-all duration-300">
+                                    {formData.historicalRecord?.inWarranty ? (
+                                    <FormInput
+                                        label="Fin de Garantía"
+                                        name="warrantyEndDate"
+                                        type="date"
+                                        value={formData.historicalRecord?.warrantyEndDate}
+                                        onChange={(e) => handleSectionChange("historicalRecord", e)}
+                                    />
+                                    ) : (
+
+                                    <div className="h-full border border-transparent rounded-md"></div>
+                                    )}
+                                </div>
+                            </div>
                             
                             <FormInput label="Forma de Adquisición" name="acquisitionMethod" value={formData.historicalRecord?.acquisitionMethod} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Tipo de Documento" name="documentType" value={formData.historicalRecord?.documentType} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Número de Documento" name="documentNumber" value={formData.historicalRecord?.documentNumber} onChange={e => handleSectionChange('historicalRecord', e)} />
                         </div>
-                        <div className="mt-6">
-                            <h5 className="font-semibold text-sm mb-2">Bitácora</h5>
-                            <ul className="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-md bg-white mb-2">
-                                {formData.historicalRecord?.log?.length ? formData.historicalRecord.log.map((entry, i) => (
-                                    <li key={i} className="text-xs text-gray-600 border-b pb-1">{entry}</li>
-                                )) : <li className="text-xs text-gray-400">No hay entradas en la bitácora.</li>}
-                            </ul>
-                             <div className="flex gap-2">
-                                <input type="text" value={newLogEntry} onChange={e => setNewLogEntry(e.target.value)} placeholder="Nueva entrada en la bitácora..." className="p-2 border border-gray-300 rounded-md w-full" />
-                                <button type="button" onClick={handleAddLog} className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 flex items-center"><Plus size={18}/></button>
-                            </div>
-                        </div>
                     </Section>
-                    <Section title="Documentos">
+                    <Section title="Documentos">    
                       {formData.documents?.map((doc, index) => (
                           <DocumentUploader key={index} document={doc} onChange={(updatedDoc) => handleDocChange(index, updatedDoc)} />
                       ))}
                     </Section>
                     <Section title="Información Metrológica Administrativa">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormCheckbox label="Requiere Mantenimiento" name="maintenance" checked={formData.metrologicalAdminInfo?.maintenance} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
+                            <div className="md:col-span-2">
+                                <FormCheckbox label="Requiere Mantenimiento" name="maintenance" checked={formData.metrologicalAdminInfo?.maintenance} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
+                            </div>
+                            
                             <FormInput label="Frecuencia Mantenimiento (meses)" name="maintenanceFrequency" type="number" value={formData.metrologicalAdminInfo?.maintenanceFrequency} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
                             <FormInput 
                                 label="Última Fecha de Mantenimiento" 
@@ -473,9 +492,10 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 placeholder="YYYY-MM-DD"
                             />
                             
-                            <div className="md:col-span-2"></div>
-                            
-                            <FormCheckbox label="Requiere Calibración" name="calibration" checked={formData.metrologicalAdminInfo?.calibration} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
+                            <div className="md:col-span-2">
+                                <FormCheckbox label="Requiere Calibración" name="calibration" checked={formData.metrologicalAdminInfo?.calibration} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
+                            </div>                            
+             
                             <FormInput label="Frecuencia Calibración (meses)" name="calibrationFrequency" type="number" value={formData.metrologicalAdminInfo?.calibrationFrequency} onChange={e => handleSectionChange('metrologicalAdminInfo', e)} />
                             <FormInput 
                                 label="Última Fecha de Calibración" 
@@ -497,9 +517,56 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                     <Section title="Información Metrológica Técnica">
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormInput label="Magnitud" name="magnitude" value={formData.metrologicalTechnicalInfo?.magnitude} onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)} />
-                            <FormInput label="Rango del Equipo" name="equipmentRange" value={formData.metrologicalTechnicalInfo?.equipmentRange} onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)} />
+                            
+                            <div className="flex flex-col">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Rango del equipo</label>
+                                <div className="flex items-center space-x-2">        
+                                    <FormInput
+                                        placeholder="Mín"
+                                        name="equipmentRangeMin"
+                                        type="number"
+                                        value={formData.metrologicalTechnicalInfo?.equipmentRangeMin}
+                                        onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)}
+                                    />
+
+                                    <span className="font-semibold">-</span>
+
+                                    <FormInput
+                                        placeholder="Máx"
+                                        name="equipmentRangeMax"
+                                        type="number"
+                                        value={formData.metrologicalTechnicalInfo?.equipmentRangeMax}
+                                        onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)}
+                                    />
+                                </div>
+                           </div>
+                        
+
                             <FormInput label="Resolución" name="resolution" value={formData.metrologicalTechnicalInfo?.resolution} onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)} />
-                            <FormInput label="Rango de Trabajo" name="workRange" value={formData.metrologicalTechnicalInfo?.workRange} onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)} />
+                            
+                            <div className="flex flex-col">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Rango de trabajo</label>
+                                <div className="flex items-center space-x-2">
+                                    <FormInput
+                                        placeholder="Mín"
+                                        name="workRangeMin"
+                                        type="number"
+                                        value={formData.metrologicalTechnicalInfo?.workRangeMin}
+                                        onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)}
+                                    />
+
+                                    <span className="font-semibold">-</span>
+
+                                    <FormInput
+                                        placeholder="Máx"
+                                        name="workRangeMax"
+                                        type="number"
+                                        value={formData.metrologicalTechnicalInfo?.workRangeMax}
+                                        onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)}
+                                    />
+                                </div>
+                            </div>
+
                             <FormInput label="Error Máximo Permitido" name="maxPermittedError" value={formData.metrologicalTechnicalInfo?.maxPermittedError} onChange={e => handleSectionChange('metrologicalTechnicalInfo', e)} />
                          </div>
                     </Section>
@@ -511,7 +578,11 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                             <FormInput label="Temperatura" name="temperature" value={formData.operatingConditions?.temperature} onChange={e => handleSectionChange('operatingConditions', e)} />
                             <FormInput label="Dimensiones" name="dimensions" value={formData.operatingConditions?.dimensions} onChange={e => handleSectionChange('operatingConditions', e)} />
                             <FormInput label="Peso" name="weight" value={formData.operatingConditions?.weight} onChange={e => handleSectionChange('operatingConditions', e)} />
-                            <FormInput label="Otras" name="otherConditions" value={formData.operatingConditions?.otherConditions} onChange={e => handleSectionChange('operatingConditions', e)} />
+                            
+                            <div className="md:col-span-2">
+                                <FormInput label="Otras" name="otherConditions" value={formData.operatingConditions?.otherConditions} onChange={e => handleSectionChange('operatingConditions', e)} />
+                            </div>
+                            
                         </div>
                     </Section>
                 </div>
@@ -535,5 +606,6 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                 </button>
             </div>
         </form>
+    </div>
     );
 };
