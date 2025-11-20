@@ -1,0 +1,341 @@
+/* Estilos globales para accesibilidad y UX mejorada */
+
+/* Focus visible mejorado - WCAG AA compliant */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Mejorar contraste para texto */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip link para navegación rápida */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #1e40af;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Reducir movimiento para usuarios que prefieren menos animaciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mejorar contraste en estados hover para mejor visibilidad */
+button:hover:not(:disabled),
+a:hover {
+  opacity: 0.9;
+}
+
+/* Estilos para mejor contraste en modales */
+[role="dialog"] {
+  max-width: 90vw;
+}
+
+/* Overlay del modal - asegurar que cubra toda la pantalla */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  min-width: 100vw !important;
+  min-height: 100vh !important;
+  z-index: 10000 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Asegurar que el body no tenga overflow cuando hay modal */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Contenedor de modales */
+#modal-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+#modal-root > * {
+  pointer-events: auto;
+}
+
+/* Mejorar lectura de tablas en lectores de pantalla */
+table {
+  border-collapse: collapse;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* Indicadores de estado más visibles */
+[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mejorar contraste de placeholders */
+::placeholder {
+  opacity: 0.6;
+}
+
+/* Estilos para mejor accesibilidad de formularios */
+input:required,
+select:required,
+textarea:required {
+  border-left: 3px solid #3b82f6;
+}
+
+input:invalid:not(:focus):not(:placeholder-shown),
+select:invalid:not(:focus),
+textarea:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: #ef4444;
+}
+
+/* Mejorar visibilidad de mensajes de error */
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Estilos para mejor navegación por teclado */
+[role="button"]:focus,
+button:focus,
+a:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Mejorar contraste para estados activos */
+[aria-current="page"] {
+  font-weight: 600;
+}
+
+/* Animaciones para mejor UX */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+/* Loading skeleton para estados de carga */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Estilos para impresión de PDF */
+@media print {
+  @page {
+    size: A4;
+    margin: 2cm 1.5cm;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+  }
+  
+  /* Ocultar elementos no necesarios al imprimir */
+  body > *:not([data-pdf-content]),
+  header:not([data-pdf-content]),
+  nav:not([data-pdf-content]),
+  aside:not([data-pdf-content]),
+  button:not([data-print]),
+  .no-print,
+  [class*="print:hidden"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Mostrar solo el contenido del PDF */
+  body {
+    display: block !important;
+  }
+  
+  /* Estilos para el contenido del PDF */
+  [data-pdf-content] {
+    max-height: none !important;
+    overflow: visible !important;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    display: block !important;
+  }
+  
+  /* Evitar saltos de página dentro de secciones importantes */
+  section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Asegurar que las firmas estén juntas y bien alineadas */
+  footer {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-top: 2cm !important;
+    padding-top: 1cm !important;
+  }
+  
+  /* Grid de firmas */
+  footer .grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2cm !important;
+    width: 100% !important;
+  }
+  
+  /* Canvas de firma */
+  canvas {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100px !important;
+    display: block !important;
+  }
+  
+  /* Contenedores de firma */
+  footer > div > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Imágenes */
+  img {
+    max-width: 150px !important;
+    height: auto !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Tablas */
+  table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Mantener colores de fondo */
+  .bg-blue-50,
+  .bg-red-50,
+  .bg-green-50,
+  .bg-gray-50,
+  .bg-amber-50 {
+    background-color: rgb(239 246 255) !important;
+    background-color: rgb(254 242 242) !important;
+    background-color: rgb(240 253 244) !important;
+    background-color: rgb(249 250 251) !important;
+    background-color: rgb(255 251 235) !important;
+  }
+  
+  /* Asegurar que los bordes se impriman */
+  .border,
+  .border-2 {
+    border-color: #000 !important;
+  }
+}
+
