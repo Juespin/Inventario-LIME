@@ -163,7 +163,12 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: name.endsWith('Id') ? parseInt(value) : value }));
+        if (name === 'serial' || name === 'inventoryCode') {
+            const numericValue = value.replace(/[^0-9]/g, '');
+            setFormData(prev => ({ ...prev, [name]: numericValue }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: name.endsWith('Id') ? parseInt(value) : value }));
+        }
     };
 
     const handleSectionChange = (section: keyof Equipment, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,6 +179,30 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                 // @ts-ignore
                 ...prev[section],
                 [name]: type === 'checkbox' ? checked : value,
+            }
+        }));
+    };
+
+    const handleMisionalClassificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value, checked } = e.target;
+        // @ts-ignore
+        const currentClassification = formData.generalInfo?.misionalClassification || [];
+        let newClassification;
+
+        if (checked) {
+            // @ts-ignore
+            newClassification = [...currentClassification, value];
+        } else {
+            // @ts-ignore
+            newClassification = currentClassification.filter((item: string) => item !== value);
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            generalInfo: {
+                // @ts-ignore
+                ...prev.generalInfo,
+                misionalClassification: newClassification,
             }
         }));
     };
@@ -209,36 +238,159 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
             <div className="p-4 border rounded-md bg-white">
                  <h3 className="font-semibold text-lg mb-3">Información Básica</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormInput label="Nombre del Equipo" name="name" value={formData.name} onChange={handleChange} />
-                    <FormInput label="Marca" name="brand" value={formData.brand} onChange={handleChange} />
-                    <FormInput label="Modelo" name="model" value={formData.model} onChange={handleChange} />
-                    <FormInput label="Número de Serie" name="serial" value={formData.serial} onChange={handleChange} />
-                    <FormInput label="Código de Inventario" name="inventoryCode" value={formData.inventoryCode} onChange={handleChange} />
+
                     <div>
-                         <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-                         <select name="status" id="status" value={formData.status} onChange={handleChange} className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                            <option value="Mantenimiento">Mantenimiento</option>
-                        </select>
-                    </div>
-                     <div>
                         <label htmlFor="siteId" className="block text-sm font-medium text-gray-700 mb-1">Sede</label>
-                        <select name="siteId" id="siteId" value={formData.siteId} onChange={handleChange} className="p-2 border border-gray-300 rounded-md w-full shadow-sm" required>
+                        <select name="siteId" 
+                                id="siteId" 
+                                value={formData.siteId} 
+                                onChange={handleChange} 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm" 
+                                required>
                             <option value={0}>Seleccione Sede</option>
                             {sites.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </div>
+
                     <div>
                         <label htmlFor="serviceId" className="block text-sm font-medium text-gray-700 mb-1">Servicio</label>
-                        <select name="serviceId" id="serviceId" value={formData.serviceId} onChange={handleChange} className="p-2 border border-gray-300 rounded-md w-full shadow-sm" required disabled={!formData.siteId}>
+                        <select name="serviceId" 
+                                id="serviceId" 
+                                value={formData.serviceId} 
+                                onChange={handleChange} 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm" 
+                                required 
+                                disabled={!formData.siteId}>
                             <option value={0}>Seleccione Servicio</option>
                             {filteredServices.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </div>
-                     <div className="md:col-span-2">
+
+                    <FormInput label="Nombre del Equipo" name="name" value={formData.name} onChange={handleChange} />
+                    <FormInput label="Marca" name="brand" value={formData.brand} onChange={handleChange} />
+                    <FormInput label="Modelo" name="model" value={formData.model} onChange={handleChange} />
+                    <FormInput label="Número de Serie" name="serial" value={formData.serial} onChange={handleChange} type="text" />
+                    <FormInput label="Código de Inventario" name="inventoryCode" value={formData.inventoryCode} onChange={handleChange} />
+                    <FormInput label="Código IPS" name="ipsCode" value={formData.generalInfo?.ipsCode} onChange={(e) => handleSectionChange('generalInfo', e)} />
+                    <FormInput label="Código ECRI" name="ecriCode" value={formData.generalInfo?.ecriCode} onChange={(e) => handleSectionChange('generalInfo', e)} />
+                    <FormInput label="Ubicación Física" name="physicalLocation" value={formData.generalInfo?.physicalLocation} onChange={(e) => handleSectionChange('generalInfo', e)} />
+                    
+                    <div className="md:col-span-2">
+                        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                        <select name="status" 
+                                id="status" 
+                                value={formData.status} 
+                                onChange={handleChange} 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
+                            <option value="">             Seleccione Estado </option>
+                            <option value="Activo">       Activo            </option>
+                            <option value="Inactivo">     Inactivo          </option>
+                            <option value="Mantenimiento">Mantenimiento     </option>
+                        </select>
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Clasificación Misional</label>
+                        <div className="flex flex-row space-x-36">
+                            {['Docencia', 'Investigación', 'Extensión'].map(option => (
+                                <div key={option} className="flex items-center">
+                                    {/* @ts-ignore */}
+                                    <input  type="checkbox" 
+                                            id={option} 
+                                            value={option} 
+                                            onChange={handleMisionalClassificationChange} 
+                                            checked={formData.generalInfo?.misionalClassification?.includes(option)} 
+                                            className="h-4 w-4 text-lime-blue-600 border-gray-300 rounded focus:ring-lime-blue-500" />
+                                    <label htmlFor={option} className="ml-2 block text-sm text-gray-900">{option}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="riskClassification" className="block text-sm font-medium text-gray-700 mb-1">Clasificación por Riesgo</label>
+                        <select name="riskClassification" 
+                                id="riskClassification" 
+                                value={formData.riskClassification}
+                                onChange={handleChange}
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
+                            <option value={0}>Seleccione Clasificación de Riesgo</option>
+                            <option value="N/A">      No aplica</option>
+                            <option value="Clase I">  Clase I  </option>
+                            <option value="Clase IIa">Clase IIa</option>
+                            <option value="Clase IIb">Clase IIb</option>
+                            <option value="Clase III">Clase III</option>
+
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="ipsClassification" className="block text-sm font-medium text-gray-700 mb-1">Clasificación en la IPS</label>
+                        <select name="ipsClassification" 
+                                id="ipsClassification" 
+                                value={formData.ipsClassification}
+                                onChange={handleChange}
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-lime-blue-500 focus:border-lime-blue-500">
+                            <option value={0}>Seleccione Clasificación en la IPS</option>
+                            <option value="N/A">      IND      </option>
+                            <option value="Clase I">  BIO      </option>
+                            <option value="Clase IIa">Gases    </option>
+
+                        </select>
+                    </div>
+
+                    <div className="md:col-span-2 space-y-2 space-x-2">
+                        <span className="block text-sm font-medium text-gray-700">Registro Invima y Permiso de comercialización</span>
+                        
+                        <input
+                            type="checkbox"
+                            id="noAplica"
+                            name="noAplica"
+                            checked={formData.generalInfo?.noAplica || false}
+                            onChange={(e) =>
+                            setFormData((prev) => ({
+                                ...prev,
+                                generalInfo: {
+                                ...prev.generalInfo,
+                                noAplica: e.target.checked,
+                                },
+                            }))
+                            }
+                            className="h-4 w-4 text-lime-blue-600 border-gray-300 rounded focus:ring-lime-blue-500"
+                        />
+                        <label htmlFor="noAplica" className="text-sm text-gray-900">
+                            No aplica
+                        </label>
+
+                    </div>
+
+
+                   {!formData.generalInfo?.noAplica && (
+                        <div className="md:col-span-2 space-y-4">
+                            <FormInput
+                            label="Registro Invima"
+                            name="invimaRecord"
+                            value={formData.generalInfo?.invimaRecord}
+                            onChange={(e) => handleSectionChange("generalInfo", e)}
+                            />
+
+                            <FormInput
+                            label="Permiso de comercialización"
+                            name="comercializationPermit"
+                            value={formData.generalInfo?.comercializationPermit}
+                            onChange={(e) => handleSectionChange("generalInfo", e)}
+                            />
+                        </div>
+                    )}
+                 
+                    <div className="md:col-span-2">
                         <label htmlFor="responsibleId" className="block text-sm font-medium text-gray-700 mb-1">Responsable</label>
-                        <select name="responsibleId" id="responsibleId" value={formData.responsibleId} onChange={handleChange} className="p-2 border border-gray-300 rounded-md w-full shadow-sm" required>
+                        <select name="responsibleId" 
+                                id="responsibleId" 
+                                value={formData.responsibleId} 
+                                onChange={handleChange} 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm" 
+                                required>
                             <option value={0}>Seleccione Responsable</option>
                             {responsibles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                         </select>
@@ -252,29 +404,40 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
 
             {showMore && (
                 <div className="mt-4 bg-slate-50 p-4 rounded-md">
-                    <Section title="Información General">
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormInput label="Proceso" name="process" value={formData.generalInfo?.process} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Código IPS" name="ipsCode" value={formData.generalInfo?.ipsCode} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Código ECRI" name="ecriCode" value={formData.generalInfo?.ecriCode} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Responsable del Proceso" name="processResponsible" value={formData.generalInfo?.processResponsible} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Ubicación Física" name="physicalLocation" value={formData.generalInfo?.physicalLocation} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Clasificación Misional" name="misionalClassification" value={formData.generalInfo?.misionalClassification} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Clasificación IPS" name="ipsClassification" value={formData.generalInfo?.ipsClassification} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Clasificación por Riesgo" name="riskClassification" value={formData.generalInfo?.riskClassification} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                            <FormInput label="Registro Invima" name="invimaRecord" value={formData.generalInfo?.invimaRecord} onChange={(e) => handleSectionChange('generalInfo', e)} />
-                       </div>
-                    </Section>
                     <Section title="Registro Histórico">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormInput label="Tiempo de Vida Útil" name="usefulLife" value={formData.historicalRecord?.usefulLife} onChange={e => handleSectionChange('historicalRecord', e)} />
+                            <FormInput  label="Tiempo de Vida Útil (en Años)" 
+                                        name="usefulLife" 
+                                        type="number" 
+                                        value={formData.historicalRecord?.usefulLife} 
+                                        onKeyDown={(e) => {
+                                            if (e.key === "-" || e.key === "e" || e.key === "+") {
+                                                e.preventDefault();
+                                            }
+                                        }}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+
+                                            if (value === "" || Number(value) >= 1) {
+                                                handleSectionChange("historicalRecord", e);
+                                            }
+                                        }}
+                            />
                             <FormInput label="Fecha de Adquisición" name="acquisitionDate" type="date" value={formData.historicalRecord?.acquisitionDate} onChange={e => handleSectionChange('historicalRecord', e)} />
-                            <FormInput label="Propietario" name="owner" value={formData.historicalRecord?.owner} onChange={e => handleSectionChange('historicalRecord', e)} />
+                            <FormInput label="Propietario del Equipo" name="owner" value={formData.historicalRecord?.owner} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Fecha de Fabricación" name="fabricationDate" type="date" value={formData.historicalRecord?.fabricationDate} onChange={e => handleSectionChange('historicalRecord', e)} />
-                            <FormInput label="NIT Proveedor" name="nit" value={formData.historicalRecord?.nit} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Proveedor" name="provider" value={formData.historicalRecord?.provider} onChange={e => handleSectionChange('historicalRecord', e)} />
+                            <FormInput label="NIT del Proveedor" name="nit" value={formData.historicalRecord?.nit} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormCheckbox label="En Garantía" name="inWarranty" checked={formData.historicalRecord?.inWarranty} onChange={e => handleSectionChange('historicalRecord', e)} />
-                            <FormInput label="Fin de Garantía" name="warrantyEndDate" type="date" value={formData.historicalRecord?.warrantyEndDate} onChange={e => handleSectionChange('historicalRecord', e)} />
+                            
+                            
+                            {formData.historicalRecord?.inWarranty && (
+                                <FormInput  label="Fin de Garantía" 
+                                        name="warrantyEndDate" 
+                                        type="date" 
+                                        value={formData.historicalRecord?.warrantyEndDate} 
+                                        onChange={e => handleSectionChange('historicalRecord', e)} />)}
+                            
                             <FormInput label="Forma de Adquisición" name="acquisitionMethod" value={formData.historicalRecord?.acquisitionMethod} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Tipo de Documento" name="documentType" value={formData.historicalRecord?.documentType} onChange={e => handleSectionChange('historicalRecord', e)} />
                             <FormInput label="Número de Documento" name="documentNumber" value={formData.historicalRecord?.documentNumber} onChange={e => handleSectionChange('historicalRecord', e)} />
