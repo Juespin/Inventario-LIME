@@ -6,6 +6,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { MaintenanceCalendar } from './components/MaintenanceCalendar';
 import { Equipment, Site, Service, Responsible, View, EquipmentFilters } from './types';
 import { mockEquipments, mockSites, mockServices, mockResponsibles } from './data/mockData';
+import api from './src/services/api';
 import { Header } from './components/Header';
 import { ToastContainer, useToast } from './components/Toast';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -13,10 +14,11 @@ import { getFiltersFromUrl, updateUrlWithFilters } from './utils/urlFilters';
 
 const App: React.FC = () => {
     const [view, setView] = useState<View>('dashboard');
-    const [equipments, setEquipments] = useState<Equipment[]>(mockEquipments);
-    const [sites, setSites] = useState<Site[]>(mockSites);
-    const [services, setServices] = useState<Service[]>(mockServices);
-    const [responsibles, setResponsibles] = useState<Responsible[]>(mockResponsibles);
+    const [equipments, setEquipments] = useState<Equipment[]>([]);
+    const [sites, setSites] = useState<Site[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
+    const [responsibles, setResponsibles] = useState<Responsible[]>([]);
+    const [loadingData, setLoadingData] = useState(true);
     
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<EquipmentFilters>(() => {
@@ -45,6 +47,52 @@ const App: React.FC = () => {
 
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
+    // Cargar datos desde el backend al iniciar (fallback a mocks si falla)
+    useEffect(() => {
+        let mounted = true;
+        async function loadData() {
+            try {
+                const results = await Promise.allSettled([
+                    api.get('/api/equipos/'),
+                    api.get('/api/sedes/'),
+                    api.get('/api/responsables/'),
+                    api.get('/api/servicios/'),
+                ]);
+
+                if (!mounted) return;
+
+                // Equipos
+                if (results[0].status === 'fulfilled') setEquipments((results[0].value).data || []);
+                else setEquipments(mockEquipments);
+
+                // Sedes
+                if (results[1].status === 'fulfilled') setSites((results[1].value).data || []);
+                else setSites(mockSites);
+
+                // Responsables
+                if (results[2].status === 'fulfilled') setResponsibles((results[2].value).data || []);
+                else setResponsibles(mockResponsibles);
+
+                // Servicios (puede no estar registrado en el router; fallback a mocks)
+                if (results[3] && results[3].status === 'fulfilled') setServices((results[3].value).data || []);
+                else setServices(mockServices);
+            } catch (err) {
+                console.error('Error cargando datos desde API:', err);
+                if (mounted) {
+                    setEquipments(mockEquipments);
+                    setSites(mockSites);
+                    setServices(mockServices);
+                    setResponsibles(mockResponsibles);
+                }
+            } finally {
+                if (mounted) setLoadingData(false);
+            }
+        }
+
+        loadData();
+        return () => { mounted = false; };
     }, []);
 
     const handleSaveEquipment = (equipmentToSave: Equipment) => {
@@ -156,6 +204,8 @@ const App: React.FC = () => {
                 onClose={() => setIsSidebarOpen(false)}
             />
             <div className="flex-1 flex flex-col overflow-hidden bg-gray-50 w-full lg:w-auto">
+                {/* DEBUG: barra visible para confirmar montaje y estado de datos */}
+                <div className="w-full text-center text-xs bg-yellow-50 border-b border-yellow-200 text-yellow-800 py-1">{loadingData ? 'Cargando datos...' : `Equipos cargados: ${equipments.length}`}</div>
                 <Header 
                     searchQuery={searchQuery} 
                     setSearchQuery={setSearchQuery}
