@@ -16,16 +16,18 @@ const TabButton: React.FC<{ label: string; isActive: boolean; onClick: () => voi
   </button>
 );
 
-const SiteManager: React.FC<{ sites: Site[]; onAdd: (name: string) => void }> = ({ sites, onAdd }) => {
+const SiteManager: React.FC<{ sites: Site[]; onAdd: (name: string) => Promise<any> | void }> = ({ sites, onAdd }) => {
     const [name, setName] = useState('');
+    const [submitting, setSubmitting] = useState(false);
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); onAdd(name); setName(''); }} className="flex flex-col sm:flex-row gap-3 mb-6">
+            <form onSubmit={async e => { e.preventDefault(); setSubmitting(true); try { await onAdd(name); setName(''); } finally { setSubmitting(false); } }} className="flex flex-col sm:flex-row gap-3 mb-6">
                 <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre de la nueva sede" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
                 <button 
                     type="submit" 
                     aria-label="Agregar nuevo elemento"
                     className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    disabled={submitting}
                 >
                     Agregar
                 </button>
@@ -34,12 +36,13 @@ const SiteManager: React.FC<{ sites: Site[]; onAdd: (name: string) => void }> = 
         </div>
     );
 };
-const ServiceManager: React.FC<{ services: Service[]; sites: Site[]; onAdd: (name: string, siteId: number) => void }> = ({ services, sites, onAdd }) => {
+const ServiceManager: React.FC<{ services: Service[]; sites: Site[]; onAdd: (name: string, siteId: number) => Promise<any> | void }> = ({ services, sites, onAdd }) => {
     const [name, setName] = useState('');
     const [siteId, setSiteId] = useState<number>(0);
+    const [submitting, setSubmitting] = useState(false);
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); onAdd(name, siteId); setName(''); setSiteId(0); }} className="flex flex-col sm:flex-row gap-3 mb-6">
+            <form onSubmit={async e => { e.preventDefault(); setSubmitting(true); try { await onAdd(name, siteId); setName(''); setSiteId(0); } finally { setSubmitting(false); } }} className="flex flex-col sm:flex-row gap-3 mb-6">
                 <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre del nuevo servicio" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
                 <select value={siteId} onChange={e => setSiteId(parseInt(e.target.value))} className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required>
                     <option value={0}>Seleccione Sede</option>
@@ -49,6 +52,7 @@ const ServiceManager: React.FC<{ services: Service[]; sites: Site[]; onAdd: (nam
                     type="submit" 
                     aria-label="Agregar nuevo elemento"
                     className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    disabled={submitting}
                 >
                     Agregar
                 </button>
@@ -57,18 +61,20 @@ const ServiceManager: React.FC<{ services: Service[]; sites: Site[]; onAdd: (nam
         </div>
     );
 };
-const ResponsibleManager: React.FC<{ responsibles: Responsible[]; onAdd: (name: string, role: string) => void }> = ({ responsibles, onAdd }) => {
+const ResponsibleManager: React.FC<{ responsibles: Responsible[]; onAdd: (name: string, role: string) => Promise<any> | void }> = ({ responsibles, onAdd }) => {
     const [name, setName] = useState('');
     const [role, setRole] = useState('');
+    const [submitting, setSubmitting] = useState(false);
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); onAdd(name, role); setName(''); setRole(''); }} className="flex flex-col sm:flex-row gap-3 mb-6">
+            <form onSubmit={async e => { e.preventDefault(); setSubmitting(true); try { await onAdd(name, role); setName(''); setRole(''); } finally { setSubmitting(false); } }} className="flex flex-col sm:flex-row gap-3 mb-6">
                 <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre del responsable" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
                 <input value={role} onChange={e => setRole(e.target.value)} placeholder="Cargo" className="p-3 border border-gray-300 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm sm:text-base" required/>
                 <button 
                     type="submit" 
                     aria-label="Agregar nuevo elemento"
                     className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    disabled={submitting}
                 >
                     Agregar
                 </button>

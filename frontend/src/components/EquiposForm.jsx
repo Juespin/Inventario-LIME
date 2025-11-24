@@ -1,89 +1,121 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { getAccessToken } from '../services/auth';
 
-export default function EquiposForm({ initial = null, onSaved, onCancel }) {
+export default function EquiposForm({ initial = {}, onSaved, onCancel, sites = [], services = [], responsibles = [] }) {
   const [form, setForm] = useState({
-    codigo_udea: '', nombre_equipo: '', marca: '', modelo: '', serie: '',
-    sede: '', servicio: '', responsable_proceso: '', ubicacion: '', codigo_ips: '', codigo_ecri: ''
+    inventory_code: '', name: '', brand: '', model: '', serial: '',
+    site: '', service: '', responsible: '', physical_location: '', ips_code: '', ecri_code: ''
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (initial) setForm(initial);
+    if (initial) setForm({ ...form, ...initial });
   }, [initial]);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const token = getAccessToken();
-      if (!token) throw new Error('Not authenticated');
+      const payload = { ...form };
+
+      // Convertir site, service y responsible a número
+      ['site', 'service', 'responsible'].forEach(k => {
+        if (payload[k] !== '') payload[k] = Number(payload[k]);
+      });
+
+      // Limpiar campos vacíos
+      const cleaned = {};
+      Object.entries(payload).forEach(([k, v]) => {
+        if (v === false || v === true) cleaned[k] = v;
+        else if (typeof v === 'number') cleaned[k] = v;
+        else if (Array.isArray(v) && v.length > 0) cleaned[k] = v;
+        else if (v !== undefined && v !== null && String(v).trim() !== '') cleaned[k] = v;
+      });
+
       if (form.id) {
-        await api.put(`/api/equipos/${form.id}/`, form);
+        await api.patch(`/api/equipos/${form.id}/`, cleaned);
       } else {
-        await api.post('/api/equipos/', form);
+        await api.post('/api/equipos/', cleaned);
       }
+
       onSaved && onSaved();
     } catch (err) {
       console.error(err);
-      alert('Error saving equipo: ' + (err.response?.data || err.message));
+      alert('Error al guardar equipo: ' + (err.response?.data || err.message));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-2">
+
+      {[
+        { label: 'Código UDEA', name: 'inventory_code' },
+        { label: 'Nombre', name: 'name' },
+        { label: 'Marca', name: 'brand' },
+        { label: 'Modelo', name: 'model' },
+        { label: 'Serie', name: 'serial' },
+        { label: 'Código IPS', name: 'ips_code' },
+        { label: 'Código ECRI', name: 'ecri_code' },
+        { label: 'Ubicación', name: 'physical_location' }
+      ].map(f => (
+        <div key={f.name}>
+          <label className="block text-sm font-medium text-gray-700">{f.label}</label>
+          <input
+            name={f.name}
+            value={form[f.name]}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded px-2 py-1"
+          />
+        </div>
+      ))}
+
+      {/* Selects para site, service y responsible */}
       <div>
-        <label>Código UDEA</label>
-        <input name="codigo_udea" value={form.codigo_udea} onChange={handleChange} required />
+        <label className="block text-sm font-medium text-gray-700">Sede</label>
+        <select name="site" value={form.site} onChange={handleChange} className="mt-1 block w-full border rounded px-2 py-1">
+          <option value="">Seleccione una sede</option>
+          {sites.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
       </div>
+
       <div>
-        <label>Nombre</label>
-        <input name="nombre_equipo" value={form.nombre_equipo} onChange={handleChange} required />
+        <label className="block text-sm font-medium text-gray-700">Servicio</label>
+        <select name="service" value={form.service} onChange={handleChange} className="mt-1 block w-full border rounded px-2 py-1">
+          <option value="">Seleccione un servicio</option>
+          {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
       </div>
+
       <div>
-        <label>Marca</label>
-        <input name="marca" value={form.marca} onChange={handleChange} />
+        <label className="block text-sm font-medium text-gray-700">Responsable</label>
+        <select name="responsible" value={form.responsible} onChange={handleChange} className="mt-1 block w-full border rounded px-2 py-1">
+          <option value="">Seleccione un responsable</option>
+          {responsibles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+        </select>
       </div>
-      <div>
-        <label>Modelo</label>
-        <input name="modelo" value={form.modelo} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Serie</label>
-        <input name="serie" value={form.serie} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Código IPS</label>
-        <input name="codigo_ips" value={form.codigo_ips} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Código ECRI</label>
-        <input name="codigo_ecri" value={form.codigo_ecri} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Sede (id)</label>
-        <input name="sede" value={form.sede} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Servicio (id)</label>
-        <input name="servicio" value={form.servicio} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Responsable (id)</label>
-        <input name="responsable_proceso" value={form.responsable_proceso} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Ubicación</label>
-        <input name="ubicacion" value={form.ubicacion} onChange={handleChange} />
-      </div>
-      <div style={{ marginTop: 8 }}>
-        <button type="submit" disabled={loading}>{loading ? 'Guardando...' : 'Guardar'}</button>
-        <button type="button" onClick={onCancel} style={{ marginLeft: 8 }}>Cancelar</button>
+
+      <div className="mt-4 flex gap-2">
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          disabled={loading}
+        >
+          {loading ? 'Guardando...' : 'Guardar'}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+        >
+          Cancelar
+        </button>
       </div>
     </form>
   );

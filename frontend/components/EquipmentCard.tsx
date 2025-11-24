@@ -13,6 +13,7 @@ interface EquipmentCardProps {
     onEdit: (equipment: Equipment) => void;
     onDecommission: (equipmentId: string, date: string, reason: string) => void;
     onTransfer: (equipmentId: string, newSiteId: number, newServiceId: number, newResponsibleId: number, justification: string) => void;
+    onDelete?: (equipmentId: string) => void;
     sites: Site[];
     services: Service[];
     responsibles: Responsible[];
@@ -73,6 +74,7 @@ export const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, siteNam
                                     <li><button onClick={() => { onEdit(equipment); setIsMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"><Edit className="w-4 h-4 mr-2"/> Editar</button></li>
                                     <li><button onClick={() => { setIsTransferModalOpen(true); setIsMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"><Move className="w-4 h-4 mr-2"/> Trasladar</button></li>
                                     <li><button onClick={() => { setIsDecommissionModalOpen(true); setIsMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"><Trash2 className="w-4 h-4 mr-2"/> Dar de baja</button></li>
+                                    <li><button onClick={() => { if (onDelete && confirm(`¿Eliminar permanentemente ${equipment.name}?`)) { onDelete(equipment.id); } setIsMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50 flex items-center">Eliminar</button></li>
                                 </ul>
                             </div>
                         )}

@@ -5,5 +5,5 @@ from .models import Responsable
 class ResponsablesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Responsable
-        fields = ['id', 'nombre', 'cargo']
+        fields = ['id', 'name', 'role']
         read_only_fields = ['id']

@@ -4,63 +4,64 @@ from servicios.models import Servicio
 from responsables.models import Responsable
 
 class Equipos(models.Model):
-    codigo_udea= models.CharField(max_length=50, unique=True)
-    nombre_equipo = models.CharField(max_length=100)
-    marca = models.CharField(max_length=20)
-    modelo = models.CharField(max_length=100)
-    serie = models.CharField(max_length=100)
-    estado= models.CharField(max_length=50)
-    sede = models.ForeignKey(Sede, on_delete=models.CASCADE, related_name='equipos')
-    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name='equipos')
-    codigo_ips= models.CharField(max_length=50, unique=True)
-    codigo_ecri = models.CharField(max_length=100)
-    responsable_proceso = models.ForeignKey(Responsable, on_delete=models.CASCADE, related_name='equipos')
-    ubicacion = models.CharField(max_length=200)
-    clasificacion_misional = models.CharField(max_length=100)
-    clasificacion_ips = models.CharField(max_length=100)
-    clasificacion_riesgo = models.CharField(max_length=100)
-    registro_invima = models.CharField(max_length=100)
-    vida_util = models.IntegerField()
-    fecha_adquisicion = models.DateField()
-    propietario = models.CharField(max_length=100)
-    fecha_fabricacion = models.DateField()
+    # normalized field names to match frontend (english)
+    inventory_code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    brand = models.CharField(max_length=20)
+    model = models.CharField(max_length=100)
+    serial = models.CharField(max_length=100)
+    status = models.CharField(max_length=50)
+    site = models.ForeignKey(Sede, on_delete=models.CASCADE, related_name='equipos')
+    service = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name='equipos')
+    ips_code = models.CharField(max_length=50, unique=True)
+    ecri_code = models.CharField(max_length=100)
+    responsible = models.ForeignKey(Responsable, on_delete=models.CASCADE, related_name='equipos')
+    physical_location = models.CharField(max_length=200)
+    misional_classification = models.CharField(max_length=100)
+    ips_classification = models.CharField(max_length=100)
+    risk_classification = models.CharField(max_length=100)
+    invima_record = models.CharField(max_length=100)
+    useful_life = models.IntegerField()
+    acquisition_date = models.DateField()
+    owner = models.CharField(max_length=100)
+    fabrication_date = models.DateField()
     nit= models.CharField(max_length=50)
-    proveedor = models.CharField(max_length=100)
-    garantia = models.BooleanField()
-    finalizacion_garantia= models.DateField()
-    forma_adquisicion= models.CharField(max_length=50)
-    tipo_documento= models.CharField(max_length=50)
-    numero_documento=models.CharField(max_length=50)
-    valor_compra= models.CharField(max_length=50)
-    hoja_de_vida=  models.BooleanField()
-    registro_importacion=  models.BooleanField()
-    manual_operacion=  models.BooleanField()
-    manual_mantenimiento=  models.BooleanField()
-    guia_rapida=  models.BooleanField()
-    instructivo_de_manejo=  models.BooleanField()
-    protocolo_mantenimiento=  models.BooleanField()
-    frecuencia_metrologia= models.CharField(max_length=100)
-    mantenimiento=  models.BooleanField()
-    frecuencia_mantenimiento= models.IntegerField()
-    calibracion=  models.BooleanField()
-    frecuencia_calibracion= models.IntegerField()
-    magnitud= models.CharField(max_length=100)
-    rango_medicion= models.CharField(max_length=100)
-    resolucion= models.CharField(max_length=100)
-    rango_trabajo= models.CharField(max_length=100)
-    error_maximo_permitido=  models.CharField(max_length=100)
-    voltaje= models.CharField(max_length=50)
-    corriente= models.CharField(max_length=50)
-    humedad_relativa= models.CharField(max_length=50)
-    temperatura_operacion= models.CharField(max_length=50)
-    dimensiones= models.CharField(max_length=100)
-    peso= models.CharField(max_length=50)
-    otros= models.TextField() 
+    provider = models.CharField(max_length=100)
+    in_warranty = models.BooleanField()
+    warranty_end_date= models.DateField()
+    acquisition_method= models.CharField(max_length=50)
+    document_type= models.CharField(max_length=50)
+    document_number=models.CharField(max_length=50)
+    purchase_value= models.CharField(max_length=50)
+    has_life_sheet=  models.BooleanField()
+    has_import_registration=  models.BooleanField()
+    has_operation_manual=  models.BooleanField()
+    has_maintenance_manual=  models.BooleanField()
+    has_quick_guide=  models.BooleanField()
+    has_instruction_manual=  models.BooleanField()
+    has_maintenance_protocol=  models.BooleanField()
+    metrology_frequency= models.CharField(max_length=100)
+    maintenance_required=  models.BooleanField()
+    maintenance_frequency= models.IntegerField()
+    calibration_required=  models.BooleanField()
+    calibration_frequency= models.IntegerField()
+    magnitude= models.CharField(max_length=100)
+    measurement_range= models.CharField(max_length=100)
+    resolution= models.CharField(max_length=100)
+    work_range= models.CharField(max_length=100)
+    max_permitted_error=  models.CharField(max_length=100)
+    voltage= models.CharField(max_length=50)
+    current= models.CharField(max_length=50)
+    relative_humidity= models.CharField(max_length=50)
+    operating_temperature= models.CharField(max_length=50)
+    dimensions= models.CharField(max_length=100)
+    weight= models.CharField(max_length=50)
+    others= models.TextField() 
 
     
 
     def __str__(self):
-        return f'{self.codigo_udea} - {self.nombre_equipo}'
+        return f'{self.inventory_code} - {self.name}'
 
     def as_dict(self):
         """Return a dict with useful fields for API/frontend consumption.
@@ -73,58 +74,58 @@ class Equipos(models.Model):
 
         return {
             'id': self.id,
-            'codigo_udea': self.codigo_udea,
-            'nombre_equipo': self.nombre_equipo,
-            'marca': self.marca,
-            'modelo': self.modelo,
-            'serie': self.serie,
-            'sede_id': getattr(self, 'sede_id', None),
-            'sede': str(self.sede) if self.sede_id else None,
-            'servicio_id': getattr(self, 'servicio_id', None),
-            'servicio': str(self.servicio) if self.servicio_id else None,
-            'responsable_proceso_id': getattr(self, 'responsable_proceso_id', None),
-            'responsable_proceso': str(self.responsable_proceso) if self.responsable_proceso_id else None,
-            'ubicacion': self.ubicacion,
-            'clasificacion_misional': self.clasificacion_misional,
-            'clasificacion_ips': self.clasificacion_ips,
-            'clasificacion_riesgo': self.clasificacion_riesgo,
-            'registro_invima': self.registro_invima,
-            'vida_util': self.vida_util,
-            'fecha_adquisicion': _date_to_iso(self.fecha_adquisicion),
-            'propietario': self.propietario,
-            'fecha_fabricacion': _date_to_iso(self.fecha_fabricacion),
+            'inventory_code': self.inventory_code,
+            'name': self.name,
+            'brand': self.brand,
+            'model': self.model,
+            'serial': self.serial,
+            'site_id': getattr(self, 'site_id', None),
+            'site': str(self.site) if self.site_id else None,
+            'service_id': getattr(self, 'service_id', None),
+            'service': str(self.service) if self.service_id else None,
+            'responsible_id': getattr(self, 'responsible_id', None),
+            'responsible': str(self.responsible) if self.responsible_id else None,
+            'physical_location': self.physical_location,
+            'misional_classification': self.misional_classification,
+            'ips_classification': self.ips_classification,
+            'risk_classification': self.risk_classification,
+            'invima_record': self.invima_record,
+            'useful_life': self.useful_life,
+            'acquisition_date': _date_to_iso(self.acquisition_date),
+            'owner': self.owner,
+            'fabrication_date': _date_to_iso(self.fabrication_date),
             'nit': self.nit,
-            'proveedor': self.proveedor,
-            'garantia': self.garantia,
-            'finalizacion_garantia': _date_to_iso(self.finalizacion_garantia),
-            'forma_adquisicion': self.forma_adquisicion,
-            'tipo_documento': self.tipo_documento,
-            'numero_documento': self.numero_documento,
-            'valor_compra': self.valor_compra,
-            'hoja_de_vida': self.hoja_de_vida,
-            'registro_importacion': self.registro_importacion,
-            'manual_operacion': self.manual_operacion,
-            'manual_mantenimiento': self.manual_mantenimiento,
-            'guia_rapida': self.guia_rapida,
-            'instructivo_de_manejo': self.instructivo_de_manejo,
-            'protocolo_mantenimiento': self.protocolo_mantenimiento,
-            'frecuencia_metrologia': self.frecuencia_metrologia,
-            'mantenimiento': self.mantenimiento,
-            'frecuencia_mantenimiento': self.frecuencia_mantenimiento,
-            'calibracion': self.calibracion,
-            'frecuencia_calibracion': self.frecuencia_calibracion,
-            'magnitud': self.magnitud,
-            'rango_medicion': self.rango_medicion,
-            'resolucion': self.resolucion,
-            'rango_trabajo': self.rango_trabajo,
-            'error_maximo_permitido': self.error_maximo_permitido,
-            'voltaje': self.voltaje,
-            'corriente': self.corriente,
-            'humedad_relativa': self.humedad_relativa,
-            'temperatura_operacion': self.temperatura_operacion,
-            'dimensiones': self.dimensiones,
-            'peso': self.peso,
-            'otros': self.otros,
+            'provider': self.provider,
+            'in_warranty': self.in_warranty,
+            'warranty_end_date': _date_to_iso(self.warranty_end_date),
+            'acquisition_method': self.acquisition_method,
+            'document_type': self.document_type,
+            'document_number': self.document_number,
+            'purchase_value': self.purchase_value,
+            'has_life_sheet': self.has_life_sheet,
+            'has_import_registration': self.has_import_registration,
+            'has_operation_manual': self.has_operation_manual,
+            'has_maintenance_manual': self.has_maintenance_manual,
+            'has_quick_guide': self.has_quick_guide,
+            'has_instruction_manual': self.has_instruction_manual,
+            'has_maintenance_protocol': self.has_maintenance_protocol,
+            'metrology_frequency': self.metrology_frequency,
+            'maintenance_required': self.maintenance_required,
+            'maintenance_frequency': self.maintenance_frequency,
+            'calibration_required': self.calibration_required,
+            'calibration_frequency': self.calibration_frequency,
+            'magnitude': self.magnitude,
+            'measurement_range': self.measurement_range,
+            'resolution': self.resolution,
+            'work_range': self.work_range,
+            'max_permitted_error': self.max_permitted_error,
+            'voltage': self.voltage,
+            'current': self.current,
+            'relative_humidity': self.relative_humidity,
+            'operating_temperature': self.operating_temperature,
+            'dimensions': self.dimensions,
+            'weight': self.weight,
+            'others': self.others,
             'display': str(self),
         }
 

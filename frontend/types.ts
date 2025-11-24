@@ -43,6 +43,8 @@ export interface TransferInfo {
 
 export interface Equipment {
     id: string;
+    // optional numeric primary key from backend
+    backendId?: number | null;
     name: string;
     brand: string;
     model: string;

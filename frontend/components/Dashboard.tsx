@@ -21,6 +21,8 @@ interface DashboardProps {
     onSaveEquipment: (equipment: Equipment) => void;
     onDecommission: (equipmentId: string, date: string, reason: string) => void;
     onTransfer: (equipmentId: string, newSiteId: number, newServiceId: number, newResponsibleId: number, justification: string, signature: string) => void;
+    // `delete` action intentionally removed from UI per request
+    fetchEquipmentByBackendId?: (backendId: number) => Promise<Equipment>;
     searchQuery: string;
     filters: EquipmentFilters;
     onFiltersChange: (filters: EquipmentFilters) => void;
@@ -37,7 +39,7 @@ const StatusBadge: React.FC<{ status: Equipment['status'] }> = ({ status }) => {
     return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
 };
 
-export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, services, responsibles, onSaveEquipment, onDecommission, onTransfer, searchQuery, filters, onFiltersChange, onClearFilters }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, services, responsibles, onSaveEquipment, onDecommission, onTransfer, fetchEquipmentByBackendId, searchQuery, filters, onFiltersChange, onClearFilters }) => {
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDecommissionModalOpen, setIsDecommissionModalOpen] = useState(false);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
@@ -49,9 +51,25 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
         setIsFormModalOpen(true);
     };
 
-    const handleEdit = (equipment: Equipment) => {
+    const [detailLoading, setDetailLoading] = useState(false);
+
+    const handleEdit = async (equipment: Equipment) => {
+        // open form immediately with current data, then fetch fresh details in background
+        console.debug('handleEdit called for', equipment.id, 'backendId', (equipment as any).backendId);
         setSelectedEquipment(equipment);
         setIsFormModalOpen(true);
+
+        if ((equipment as any)?.backendId && fetchEquipmentByBackendId) {
+            setDetailLoading(true);
+            try {
+                const full = await fetchEquipmentByBackendId((equipment as any).backendId);
+                setSelectedEquipment(full);
+            } catch (err) {
+                console.error('Failed to fetch equipment details for edit', err);
+            } finally {
+                setDetailLoading(false);
+            }
+        }
     };
     
     const handleOpenDecommission = (equipment: Equipment) => {
@@ -64,9 +82,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
         setIsTransferModalOpen(true);
     };
 
-    const handleViewDetails = (equipment: Equipment) => {
+    const handleViewDetails = async (equipment: Equipment) => {
+        // open details immediately with current data, then fetch full details in background
+        console.debug('handleViewDetails called for', equipment.id, 'backendId', (equipment as any).backendId);
         setSelectedEquipment(equipment);
         setIsDetailModalOpen(true);
+
+        if ((equipment as any)?.backendId && fetchEquipmentByBackendId) {
+            setDetailLoading(true);
+            try {
+                const full = await fetchEquipmentByBackendId((equipment as any).backendId);
+                setSelectedEquipment(full);
+            } catch (err) {
+                console.error('Failed to fetch equipment details for view', err);
+            } finally {
+                setDetailLoading(false);
+            }
+        }
     };
 
     const handleSave = (equipment: Equipment) => {
@@ -154,9 +186,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gradient-to-r from-blue-50 to-blue-50/50">
                             <tr>
-                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código Inventario</th>
-                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Nombre Equipo</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Nombre</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Marca / Modelo</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Serie</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código IPS</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código Inventario</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Sede / Servicio</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Estado</th>
                                 <th scope="col" className="relative px-4 lg:px-6 py-3 lg:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
@@ -174,9 +208,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                         className={`transition-all duration-150 animate-fade-in ${isInactive ? 'bg-gray-50/50 text-gray-400' : 'hover:bg-blue-50/50 hover:shadow-sm'}`}
                                         style={{ animationDelay: `${index * 0.03}s` }}
                                     >
-                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm font-semibold ${isInactive ? 'text-gray-400' : 'text-gray-900'}`}>{equipment.inventoryCode}</td>
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm font-medium ${isInactive ? 'text-gray-400' : 'text-gray-800'}`}>{equipment.name}</td>
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.brand} / {equipment.model}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.serial}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.generalInfo?.ipsCode || 'N/A'}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm font-semibold ${isInactive ? 'text-gray-400' : 'text-gray-900'}`}>{equipment.inventoryCode}</td>
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{siteName} / {serviceName}</td>
                                         <td className="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap">
                                             <StatusBadge status={equipment.status} />
@@ -219,13 +255,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                                                     </button>
                                                 </Tooltip>
+                                                {/* Delete action removed per UX request */}
                                             </div>
                                         </td>
                                     </tr>
                                 );
                             }) : (
                                 <tr>
-                                    <td colSpan={6} className="p-0">
+                                    <td colSpan={8} className="p-0">
                                         <div className={`p-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
                                             <EmptyState 
                                                 type="search"
@@ -259,15 +296,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                             <div className="flex justify-between items-start mb-3">
                                 <div className="flex-1">
                                     <h3 className={`text-base font-semibold ${isInactive ? 'text-gray-400' : 'text-gray-900'} mb-1`}>{equipment.name}</h3>
-                                    <p className="text-xs text-gray-500 font-mono">{equipment.inventoryCode}</p>
+                                    <p className="text-xs text-gray-500">{equipment.brand} / {equipment.model}</p>
                                 </div>
                                 <StatusBadge status={equipment.status} />
                             </div>
                             
                             <div className="space-y-2 mb-4 text-sm">
                                 <div>
-                                    <span className="text-gray-500">Marca/Modelo: </span>
-                                    <span className={isInactive ? 'text-gray-400' : 'text-gray-800'}>{equipment.brand} / {equipment.model}</span>
+                                    <span className="text-gray-500">Serie: </span>
+                                    <span className={isInactive ? 'text-gray-400' : 'text-gray-800'}>{equipment.serial || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500">Código IPS: </span>
+                                    <span className={isInactive ? 'text-gray-400' : 'text-gray-800'}>{equipment.generalInfo?.ipsCode || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500">Código Inventario: </span>
+                                    <span className={isInactive ? 'text-gray-400' : 'text-gray-800'}>{equipment.inventoryCode || 'N/A'}</span>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">Ubicación: </span>
@@ -304,6 +349,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                     className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
                                     <Trash2 className="h-5 w-5" aria-hidden="true" />
                                 </button>
+                                {/* Delete action removed from mobile card */}
                             </div>
                         </div>
                     );
@@ -358,6 +404,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
             
             {isDetailModalOpen && selectedEquipment && (
                 <Modal title={`Detalles de ${selectedEquipment.name}`} onClose={() => closeModal(setIsDetailModalOpen)}>
+                    {detailLoading && <div className="p-3 text-sm text-gray-500">Cargando detalles...</div>}
                     <EquipmentDetail 
                         equipment={selectedEquipment}
                         sites={sites}

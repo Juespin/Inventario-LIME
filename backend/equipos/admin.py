@@ -4,6 +4,6 @@ from .models import Equipos
 
 @admin.register(Equipos)
 class EquiposAdmin(admin.ModelAdmin):
-	list_display = ('codigo_udea', 'nombre_equipo', 'sede', 'servicio', 'responsable_proceso')
-	search_fields = ('codigo_udea', 'nombre_equipo', 'codigo_ips')
-	list_filter = ('sede', 'servicio')
+	list_display = ('inventory_code', 'name', 'site', 'service', 'responsible')
+	search_fields = ('inventory_code', 'name', 'ips_code')
+	list_filter = ('site', 'service')
