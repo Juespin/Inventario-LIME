@@ -127,7 +127,7 @@ const FormInput: React.FC<{ label: string; name: string; value: any; onChange: a
             value={value || ''}
             onChange={onChange}
             placeholder={placeholder || label}
-            className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500"
         />
     </div>
 );
@@ -258,7 +258,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="siteId" 
                                 value={formData.siteId} 
                                 onChange={handleChange} 
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm" 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500" 
                                 required>
                             <option value={0}>Seleccione Sede</option>
                             {sites.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -271,7 +271,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="serviceId" 
                                 value={formData.serviceId} 
                                 onChange={handleChange} 
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm" 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500" 
                                 required 
                                 disabled={!formData.siteId}>
                             <option value={0}>Seleccione Servicio</option>
@@ -294,7 +294,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="status" 
                                 value={formData.status} 
                                 onChange={handleChange} 
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">             Seleccione Estado </option>
                             <option value="Activo">       Activo            </option>
                             <option value="Inactivo">     Inactivo          </option>
@@ -326,7 +326,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="riskClassification" 
                                 value={formData.generalInfo?.riskClassification}
                                 onChange={(e) => handleSectionChange('generalInfo', e)}
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500">
                             <option value={0}>Seleccione Clasificación de Riesgo</option>
                             <option value="N/A">      No aplica</option>
                             <option value="Clase I">  Clase I  </option>
@@ -343,7 +343,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="ipsClassification" 
                                 value={formData.generalInfo?.ipsClassification}
                                 onChange={(e) => handleSectionChange('generalInfo', e)}
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500">
                             <option value={0}>Seleccione Clasificación en la IPS</option>
                             <option value="N/A">      IND      </option>
                             <option value="Clase I">  BIO      </option>
@@ -402,7 +402,7 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
                                 id="responsibleId" 
                                 value={formData.responsibleId} 
                                 onChange={handleChange} 
-                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm" 
+                                className="p-2 border border-gray-300 rounded-md w-full shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500" 
                                 required>
                             <option value={0}>Seleccione Responsable</option>
                             {responsibles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}

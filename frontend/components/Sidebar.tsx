@@ -1,12 +1,14 @@
 import React from 'react';
 import { View } from '../types';
-import { Home, Settings, X, Calendar } from 'lucide-react';
+import { Home, Settings, X, Calendar, LogOut } from 'lucide-react';
 
 interface SidebarProps {
     currentView: View;
     setView: (view: View) => void;
     isOpen: boolean;
     onClose: () => void;
+    userData?: any;
+    onLogout?: () => void;
 }
 
 const NavItem: React.FC<{
@@ -33,7 +35,7 @@ const NavItem: React.FC<{
     </li>
 );
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, isOpen, onClose }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, isOpen, onClose, userData, onLogout }) => {
     const handleNavClick = (view: View) => {
         setView(view);
         onClose(); // Cerrar el menú al hacer clic en móvil
@@ -84,16 +86,36 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, isOpen, 
                                 isActive={currentView === 'maintenance-calendar'}
                                 onClick={() => handleNavClick('maintenance-calendar')}
                             />
-                            <NavItem 
-                                icon={<Settings className="w-6 h-6" />}
-                                label="Administración"
-                                isActive={currentView === 'administration'}
-                                onClick={() => handleNavClick('administration')}
-                            />
+                            {userData?.role === 'admin' && (
+                                <NavItem 
+                                    icon={<Settings className="w-6 h-6" />}
+                                    label="Administración"
+                                    isActive={currentView === 'administration'}
+                                    onClick={() => handleNavClick('administration')}
+                                />
+                            )}
                         </ul>
                     </nav>
                     
-                    <div className="mt-auto p-3 sm:p-4 text-center text-xs text-green-600">
+                    {onLogout && (
+                        <div className="mt-auto mb-4">
+                            <button
+                                onClick={onLogout}
+                                className="flex items-center w-full p-3 text-base font-normal rounded-lg text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+                                aria-label="Cerrar sesión"
+                            >
+                                <LogOut className="w-5 h-5 mr-3" />
+                                <span>Cerrar sesión</span>
+                            </button>
+                            {userData && (
+                                <div className="mt-2 p-2 text-xs text-gray-600 bg-white rounded">
+                                    <p className="font-semibold">{userData.username}</p>
+                                    <p className="text-gray-500">{userData.role === 'admin' ? 'Administrador' : 'Lector'}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    <div className="p-3 sm:p-4 text-center text-xs text-green-600">
                         <div className="flex justify-around items-center mt-4">
                                 <img src="/assets/lime.png" alt="Logo LIME" className="sm:h-14" />
                             </div>

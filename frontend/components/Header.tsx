@@ -1,14 +1,16 @@
 
 import React, { useEffect } from 'react';
-import { Search, UserCircle, Bell, Menu } from 'lucide-react';
+import { Search, UserCircle, Bell, Menu, LogOut } from 'lucide-react';
 
 interface HeaderProps {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     onMenuClick: () => void;
+    userData?: any;
+    onLogout?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery, onMenuClick }) => {
+export const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery, onMenuClick, userData, onLogout }) => {
     // Atajo de teclado: Ctrl+K o Cmd+K para enfocar búsqueda
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -75,9 +77,19 @@ export const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery, onM
                         <UserCircle className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                     </div>
                     <div className="hidden sm:block">
-                        <p className="text-sm font-semibold text-gray-800">Usuario Administrador</p>
-                        <p className="text-xs text-gray-500">Admin</p>
+                        <p className="text-sm font-semibold text-gray-800">{userData?.username || 'Usuario'}</p>
+                        <p className="text-xs text-gray-500">{userData?.role === 'admin' ? 'Administrador' : 'Lector'}</p>
                     </div>
+                    {onLogout && (
+                        <button
+                            onClick={onLogout}
+                            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-red-600 transition-colors ml-2"
+                            aria-label="Cerrar sesión"
+                            title="Cerrar sesión"
+                        >
+                            <LogOut className="h-5 w-5" />
+                        </button>
+                    )}
                 </div>
             </div>
         </header>

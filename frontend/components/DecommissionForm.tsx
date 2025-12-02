@@ -28,7 +28,7 @@ export const DecommissionForm: React.FC<DecommissionFormProps> = ({ equipmentNam
                     id="decommissionDate"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                     required
                 />
             </div>
@@ -39,7 +39,7 @@ export const DecommissionForm: React.FC<DecommissionFormProps> = ({ equipmentNam
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     rows={3}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Describa el motivo de la baja del equipo..."
                     required
                 />

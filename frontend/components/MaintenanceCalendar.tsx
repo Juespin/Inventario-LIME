@@ -273,7 +273,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
                         <select
                             value={filterType}
                             onChange={(e) => setFilterType(e.target.value as MaintenanceType | 'all')}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             aria-label="Filtrar por tipo"
                         >
                             <option value="all">Todos los tipos</option>
@@ -284,7 +284,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value as 'all' | 'upcoming' | 'due' | 'overdue')}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             aria-label="Filtrar por estado"
                         >
                             <option value="all">Todos los estados</option>

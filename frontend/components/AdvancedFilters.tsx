@@ -243,7 +243,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                             id="filter-site"
                             value={filters.siteId || ''}
                             onChange={(e) => handleFilterChange('siteId', e.target.value ? parseInt(e.target.value) : undefined)}
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-gray-900"
                         >
                             <option value="">Todas las sedes</option>
                             {sites.map(site => (
@@ -262,7 +262,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                             value={filters.serviceId || ''}
                             onChange={(e) => handleFilterChange('serviceId', e.target.value ? parseInt(e.target.value) : undefined)}
                             disabled={!filters.siteId && filteredServices.length === 0}
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-gray-900 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                         >
                             <option value="">
                                 {filters.siteId ? 'Todos los servicios' : 'Selecciona primero una sede'}
@@ -282,7 +282,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                             id="filter-responsible"
                             value={filters.responsibleId || ''}
                             onChange={(e) => handleFilterChange('responsibleId', e.target.value ? parseInt(e.target.value) : undefined)}
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-gray-900"
                         >
                             <option value="">Todos los responsables</option>
                             {responsibles.map(responsible => (
@@ -311,7 +311,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                                 onFocus={() => setShowBrandSuggestions(true)}
                                 onBlur={() => setTimeout(() => setShowBrandSuggestions(false), 200)}
                                 placeholder="Buscar por marca..."
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-gray-900"
                             />
                             {showBrandSuggestions && brandSearch && filteredBrands.length > 0 && (
                                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">

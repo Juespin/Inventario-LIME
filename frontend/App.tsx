@@ -4,6 +4,7 @@ import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { AdminPanel } from './components/AdminPanel';
 import { MaintenanceCalendar } from './components/MaintenanceCalendar';
+import { Login } from './components/Login';
 import { Equipment, Site, Service, Responsible, View, EquipmentFilters } from './types';
 import { mockEquipments, mockSites, mockServices, mockResponsibles } from './data/mockData';
 import api from './src/services/api';
@@ -11,8 +12,11 @@ import { Header } from './components/Header';
 import { ToastContainer, useToast } from './components/Toast';
 import { ScrollToTop } from './components/ScrollToTop';
 import { getFiltersFromUrl, updateUrlWithFilters } from './utils/urlFilters';
+import { isAuthenticated, getUserData, logout, isAdmin } from './src/services/auth';
 
 const App: React.FC = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+    const [userData, setUserData] = useState<any>(getUserData());
     const [view, setView] = useState<View>('dashboard');
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [sites, setSites] = useState<Site[]>([]);
@@ -49,8 +53,19 @@ const App: React.FC = () => {
         return () => window.removeEventListener('popstate', handlePopState);
     }, []);
 
-    // Cargar datos desde el backend al iniciar (fallback a mocks si falla)
+    // Proteger acceso al panel de administración para lectores
     useEffect(() => {
+        if (view === 'administration' && userData?.role !== 'admin') {
+            setView('dashboard');
+            showToast('No tienes permisos para acceder al panel de administración', 'error');
+        }
+    }, [view, userData, showToast]);
+
+    // Cargar datos desde el backend al iniciar (fallback a mocks si falla)
+    // Solo cargar si el usuario está autenticado
+    useEffect(() => {
+        if (!isLoggedIn) return;
+        
         let mounted = true;
         async function loadData() {
             try {
@@ -119,7 +134,7 @@ const App: React.FC = () => {
 
         loadData();
         return () => { mounted = false; };
-    }, []);
+    }, [isLoggedIn]);
 
     const mapFrontendToBackend = (eq: Equipment) => ({
         inventory_code: eq.inventoryCode || undefined,
@@ -417,8 +432,26 @@ const App: React.FC = () => {
                             filters={filters}
                             onFiltersChange={setFilters}
                             onClearFilters={() => setFilters({})}
+                            userData={userData}
                         />;
             case 'administration':
+                // Protección adicional: si no es admin, mostrar dashboard
+                if (userData?.role !== 'admin') {
+                    return <Dashboard 
+                                equipments={equipments}
+                                sites={sites}
+                                services={services}
+                                responsibles={responsibles}
+                                onSaveEquipment={handleSaveEquipment}
+                                onDecommission={handleDecommission}
+                                onTransfer={handleTransfer}
+                                searchQuery={searchQuery}
+                                filters={filters}
+                                onFiltersChange={setFilters}
+                                onClearFilters={() => setFilters({})}
+                                userData={userData}
+                            />;
+                }
                 return <AdminPanel 
                             sites={sites} 
                             services={services} 
@@ -426,6 +459,7 @@ const App: React.FC = () => {
                             onAddSite={addSite}
                             onAddService={addService}
                             onAddResponsible={addResponsible}
+                            userData={userData}
                         />;
             case 'maintenance-calendar':
                 return <MaintenanceCalendar 
@@ -443,11 +477,31 @@ const App: React.FC = () => {
                             onSaveEquipment={handleSaveEquipment}
                             onDecommission={handleDecommission}
                             onTransfer={handleTransfer}
-                            
                             searchQuery={searchQuery}
+                            filters={filters}
+                            onFiltersChange={setFilters}
+                            onClearFilters={() => setFilters({})}
+                            userData={userData}
                         />;
         }
     };
+
+    const handleLoginSuccess = (userData: any) => {
+        setUserData(userData);
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        logout();
+        setIsLoggedIn(false);
+        setUserData(null);
+        showToast('Sesión cerrada correctamente', 'success');
+    };
+
+    // Si no está autenticado, mostrar login
+    if (!isLoggedIn) {
+        return <Login onLoginSuccess={handleLoginSuccess} />;
+    }
 
     return (
         <div className="flex h-screen bg-gray-50 text-slate-800">
@@ -456,14 +510,20 @@ const App: React.FC = () => {
                 setView={setView} 
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
+                userData={userData}
+                onLogout={handleLogout}
             />
             <div className="flex-1 flex flex-col overflow-hidden bg-gray-50 w-full lg:w-auto">
                 {/* DEBUG: barra visible para confirmar montaje y estado de datos */}
-                <div className="w-full text-center text-xs bg-yellow-50 border-b border-yellow-200 text-yellow-800 py-1">{loadingData ? 'Cargando datos...' : `Equipos cargados: ${equipments.length}`}</div>
+                <div className="w-full text-center text-xs bg-yellow-50 border-b border-yellow-200 text-yellow-800 py-1">
+                    {loadingData ? 'Cargando datos...' : `Equipos cargados: ${equipments.length} | Usuario: ${userData?.username || 'N/A'} (${userData?.role || 'N/A'})`}
+                </div>
                 <Header 
                     searchQuery={searchQuery} 
                     setSearchQuery={setSearchQuery}
                     onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    userData={userData}
+                    onLogout={handleLogout}
                 />
                 <main 
                     id="main-content"

@@ -27,6 +27,7 @@ interface DashboardProps {
     filters: EquipmentFilters;
     onFiltersChange: (filters: EquipmentFilters) => void;
     onClearFilters: () => void;
+    userData?: any;
 }
 
 const StatusBadge: React.FC<{ status: Equipment['status'] }> = ({ status }) => {
@@ -39,7 +40,8 @@ const StatusBadge: React.FC<{ status: Equipment['status'] }> = ({ status }) => {
     return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
 };
 
-export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, services, responsibles, onSaveEquipment, onDecommission, onTransfer, fetchEquipmentByBackendId, searchQuery, filters, onFiltersChange, onClearFilters }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, services, responsibles, onSaveEquipment, onDecommission, onTransfer, fetchEquipmentByBackendId, searchQuery, filters, onFiltersChange, onClearFilters, userData }) => {
+    const isAdmin = userData?.role === 'admin';
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDecommissionModalOpen, setIsDecommissionModalOpen] = useState(false);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
@@ -169,15 +171,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                     <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">Dashboard de Equipos</h1>
                     <p className="text-xs sm:text-sm text-gray-500">Gestiona y administra tu inventario de equipos médicos</p>
                 </div>
-                <button 
-                    onClick={handleAddNew}
-                    aria-label="Registrar nuevo equipo"
-                    className="flex items-center justify-center bg-blue-600 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    <PlusCircle className="mr-2 h-5 w-5" aria-hidden="true" />
-                    <span className="hidden sm:inline">Registrar Equipo</span>
-                    <span className="sm:hidden">Registrar</span>
-                </button>
+                {isAdmin && (
+                    <button 
+                        onClick={handleAddNew}
+                        aria-label="Registrar nuevo equipo"
+                        className="flex items-center justify-center bg-blue-600 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        <PlusCircle className="mr-2 h-5 w-5" aria-hidden="true" />
+                        <span className="hidden sm:inline">Registrar Equipo</span>
+                        <span className="sm:hidden">Registrar</span>
+                    </button>
+                )}
             </div>
 
             {/* Vista de tabla para desktop */}
@@ -227,34 +231,38 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                                         <Eye className="h-4 w-4" aria-hidden="true" />
                                                     </button>
                                                 </Tooltip>
-                                                <Tooltip text="Editar equipo">
-                                                    <button 
-                                                        onClick={() => handleEdit(equipment)} 
-                                                        aria-label={`Editar ${equipment.name}`}
-                                                        className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                                        <Edit className="h-4 w-4" aria-hidden="true" />
-                                                    </button>
-                                                </Tooltip>
-                                                <Tooltip text={isInactive ? "Equipo inactivo, no se puede trasladar" : "Trasladar equipo"}>
-                                                    <button 
-                                                        onClick={() => handleOpenTransfer(equipment)} 
-                                                        aria-label={`Trasladar ${equipment.name}`}
-                                                        disabled={isInactive}
-                                                        aria-disabled={isInactive}
-                                                        className="p-1.5 sm:p-2 text-amber-600 hover:bg-amber-100 hover:text-amber-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:text-gray-300 disabled:hover:bg-transparent disabled:hover:scale-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
-                                                        <Move className="h-4 w-4" aria-hidden="true" />
-                                                    </button>
-                                                </Tooltip>
-                                                <Tooltip text={isInactive ? "Equipo ya está dado de baja" : "Dar de baja equipo"}>
-                                                    <button 
-                                                        onClick={() => handleOpenDecommission(equipment)} 
-                                                        aria-label={`Dar de baja ${equipment.name}`}
-                                                        disabled={isInactive}
-                                                        aria-disabled={isInactive}
-                                                        className="p-1.5 sm:p-2 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:text-gray-300 disabled:hover:bg-transparent disabled:hover:scale-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
-                                                        <Trash2 className="h-4 w-4" aria-hidden="true" />
-                                                    </button>
-                                                </Tooltip>
+                                                {isAdmin && (
+                                                    <>
+                                                        <Tooltip text="Editar equipo">
+                                                            <button 
+                                                                onClick={() => handleEdit(equipment)} 
+                                                                aria-label={`Editar ${equipment.name}`}
+                                                                className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                                                <Edit className="h-4 w-4" aria-hidden="true" />
+                                                            </button>
+                                                        </Tooltip>
+                                                        <Tooltip text={isInactive ? "Equipo inactivo, no se puede trasladar" : "Trasladar equipo"}>
+                                                            <button 
+                                                                onClick={() => handleOpenTransfer(equipment)} 
+                                                                aria-label={`Trasladar ${equipment.name}`}
+                                                                disabled={isInactive}
+                                                                aria-disabled={isInactive}
+                                                                className="p-1.5 sm:p-2 text-amber-600 hover:bg-amber-100 hover:text-amber-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:text-gray-300 disabled:hover:bg-transparent disabled:hover:scale-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                                                <Move className="h-4 w-4" aria-hidden="true" />
+                                                            </button>
+                                                        </Tooltip>
+                                                        <Tooltip text={isInactive ? "Equipo ya está dado de baja" : "Dar de baja equipo"}>
+                                                            <button 
+                                                                onClick={() => handleOpenDecommission(equipment)} 
+                                                                aria-label={`Dar de baja ${equipment.name}`}
+                                                                disabled={isInactive}
+                                                                aria-disabled={isInactive}
+                                                                className="p-1.5 sm:p-2 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:text-gray-300 disabled:hover:bg-transparent disabled:hover:scale-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                                                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                                                            </button>
+                                                        </Tooltip>
+                                                    </>
+                                                )}
                                                 {/* Delete action removed per UX request */}
                                             </div>
                                         </td>
@@ -266,7 +274,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                         <div className={`p-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
                                             <EmptyState 
                                                 type="search"
-                                                action={searchQuery ? undefined : {
+                                                action={searchQuery || !isAdmin ? undefined : {
                                                     label: 'Registrar Primer Equipo',
                                                     onClick: handleAddNew
                                                 }}
@@ -327,28 +335,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                     className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                     <Eye className="h-5 w-5" aria-hidden="true" />
                                 </button>
-                                <button 
-                                    onClick={() => handleEdit(equipment)} 
-                                    aria-label={`Editar ${equipment.name}`}
-                                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                    <Edit className="h-5 w-5" aria-hidden="true" />
-                                </button>
-                                <button 
-                                    onClick={() => handleOpenTransfer(equipment)} 
-                                    aria-label={`Trasladar ${equipment.name}`}
-                                    disabled={isInactive}
-                                    aria-disabled={isInactive}
-                                    className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
-                                    <Move className="h-5 w-5" aria-hidden="true" />
-                                </button>
-                                <button 
-                                    onClick={() => handleOpenDecommission(equipment)} 
-                                    aria-label={`Dar de baja ${equipment.name}`}
-                                    disabled={isInactive}
-                                    aria-disabled={isInactive}
-                                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
-                                    <Trash2 className="h-5 w-5" aria-hidden="true" />
-                                </button>
+                                {isAdmin && (
+                                    <>
+                                        <button 
+                                            onClick={() => handleEdit(equipment)} 
+                                            aria-label={`Editar ${equipment.name}`}
+                                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                            <Edit className="h-5 w-5" aria-hidden="true" />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleOpenTransfer(equipment)} 
+                                            aria-label={`Trasladar ${equipment.name}`}
+                                            disabled={isInactive}
+                                            aria-disabled={isInactive}
+                                            className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                            <Move className="h-5 w-5" aria-hidden="true" />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleOpenDecommission(equipment)} 
+                                            aria-label={`Dar de baja ${equipment.name}`}
+                                            disabled={isInactive}
+                                            aria-disabled={isInactive}
+                                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:text-gray-300 disabled:hover:bg-transparent disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:focus:ring-gray-400">
+                                            <Trash2 className="h-5 w-5" aria-hidden="true" />
+                                        </button>
+                                    </>
+                                )}
                                 {/* Delete action removed from mobile card */}
                             </div>
                         </div>
@@ -357,7 +369,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                     <div className={`transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
                         <EmptyState 
                             type={equipments.length === 0 ? "empty" : "search"}
-                            action={equipments.length === 0 ? {
+                            action={equipments.length === 0 && isAdmin ? {
                                 label: 'Registrar Primer Equipo',
                                 onClick: handleAddNew
                             } : undefined}

@@ -68,7 +68,7 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
             
             <div>
                 <label className="block text-sm font-medium text-gray-700">Nueva Sede</label>
-                <select value={newSiteId} onChange={(e) => setNewSiteId(parseInt(e.target.value))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+                <select value={newSiteId} onChange={(e) => setNewSiteId(parseInt(e.target.value))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500" required>
                     <option value={0}>Seleccione una sede</option>
                     {sites.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
@@ -76,7 +76,7 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
 
             <div>
                 <label className="block text-sm font-medium text-gray-700">Nuevo Servicio</label>
-                <select value={newServiceId} onChange={(e) => setNewServiceId(parseInt(e.target.value))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required disabled={!newSiteId}>
+                <select value={newServiceId} onChange={(e) => setNewServiceId(parseInt(e.target.value))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500" required disabled={!newSiteId}>
                     <option value={0}>Seleccione un servicio</option>
                     {filteredServices.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
@@ -84,7 +84,7 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
             
             <div>
                 <label className="block text-sm font-medium text-gray-700">Nuevo Responsable</label>
-                <select value={newResponsibleId} onChange={(e) => setNewResponsibleId(parseInt(e.target.value))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+                <select value={newResponsibleId} onChange={(e) => setNewResponsibleId(parseInt(e.target.value))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500" required>
                     <option value={0}>Seleccione un responsable</option>
                     {responsibles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                 </select>
@@ -92,7 +92,7 @@ export const TransferForm: React.FC<TransferFormProps> = ({ equipment, sites, se
 
             <div>
                 <label className="block text-sm font-medium text-gray-700">Justificación</label>
-                <textarea value={justification} onChange={(e) => setJustification(e.target.value)} rows={3} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required />
+                <textarea value={justification} onChange={(e) => setJustification(e.target.value)} rows={3} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:ring-blue-500 focus:border-blue-500" required />
             </div>
 
             <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
