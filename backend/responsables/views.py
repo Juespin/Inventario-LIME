@@ -1,5 +1,6 @@
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
+from users.permissions import IsAdminOrReadOnly
 from .models import Responsable
 from .serializers import ResponsablesSerializer
 
@@ -7,5 +8,4 @@ from .serializers import ResponsablesSerializer
 class ResponsablesViewSet(viewsets.ModelViewSet):
 	queryset = Responsable.objects.all()
 	serializer_class = ResponsablesSerializer
-	# allow unauthenticated writes in development (frontend creating records)
-	permission_classes = [AllowAny]
+	permission_classes = [IsAuthenticated, IsAdminOrReadOnly]

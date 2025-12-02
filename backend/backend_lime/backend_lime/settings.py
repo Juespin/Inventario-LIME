@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'equipos',
     'responsables',
     'sedes',
-    'servicios'
+    'servicios',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -82,12 +83,8 @@ WSGI_APPLICATION = 'backend_lime.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'lime_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -142,7 +139,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 

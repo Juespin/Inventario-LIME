@@ -43,8 +43,10 @@ class Equipos(models.Model):
     metrology_frequency= models.CharField(max_length=100)
     maintenance_required=  models.BooleanField()
     maintenance_frequency= models.IntegerField()
+    last_maintenance_date = models.DateField(null=True, blank=True)
     calibration_required=  models.BooleanField()
     calibration_frequency= models.IntegerField()
+    last_calibration_date = models.DateField(null=True, blank=True)
     magnitude= models.CharField(max_length=100)
     measurement_range= models.CharField(max_length=100)
     resolution= models.CharField(max_length=100)
@@ -112,8 +114,10 @@ class Equipos(models.Model):
             'metrology_frequency': self.metrology_frequency,
             'maintenance_required': self.maintenance_required,
             'maintenance_frequency': self.maintenance_frequency,
+            'last_maintenance_date': _date_to_iso(self.last_maintenance_date),
             'calibration_required': self.calibration_required,
             'calibration_frequency': self.calibration_frequency,
+            'last_calibration_date': _date_to_iso(self.last_calibration_date),
             'magnitude': self.magnitude,
             'measurement_range': self.measurement_range,
             'resolution': self.resolution,

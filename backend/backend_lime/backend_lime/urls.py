@@ -6,10 +6,7 @@ from equipos.views import EquiposViewSet
 from responsables.views import ResponsablesViewSet
 from sedes.views import SedesViewSet
 from servicios.views import ServiciosViewSet
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenRefreshView
 
 # Crear el router principal
 router = routers.DefaultRouter()
@@ -23,8 +20,11 @@ urlpatterns = [
     path('', include(router.urls)),  # Ruta raíz redirige a la API
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    # JWT token endpoints
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # Incluir URLs de equipos (incluye endpoints de mantenimiento)
+    path('api/', include('equipos.urls')),
+    # Incluir URLs de usuarios (incluye token personalizado y registro)
+    path('api/', include('users.urls')),
+    # JWT token refresh endpoint
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # Añadir la autenticación de la API
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
