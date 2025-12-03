@@ -5,6 +5,27 @@ from sedes.serializers import SedesSerializer
 from servicios.serializers import ServiciosSerializer
 
 class EquiposSerializer(serializers.ModelSerializer):
+    # Provide safe defaults for fields that are non-null at DB level so
+    # serializers won't accidentally pass `None` (which would cause a DB
+    # integrity error). These defaults avoid server 500 errors when the
+    # frontend omits checkbox fields (unchecked checkboxes are often
+    # omitted in the payload) or other optional numbers are missing.
+    in_warranty = serializers.BooleanField(required=False, default=False)
+    has_life_sheet = serializers.BooleanField(required=False, default=False)
+    has_import_registration = serializers.BooleanField(required=False, default=False)
+    has_operation_manual = serializers.BooleanField(required=False, default=False)
+    has_maintenance_manual = serializers.BooleanField(required=False, default=False)
+    has_quick_guide = serializers.BooleanField(required=False, default=False)
+    has_instruction_manual = serializers.BooleanField(required=False, default=False)
+    has_maintenance_protocol = serializers.BooleanField(required=False, default=False)
+    maintenance_required = serializers.BooleanField(required=False, default=False)
+    calibration_required = serializers.BooleanField(required=False, default=False)
+
+    # Integer fields which don't accept NULL in the DB should also get a safe
+    # numeric default when the frontend sends nothing.
+    useful_life = serializers.IntegerField(required=False, default=0)
+    maintenance_frequency = serializers.IntegerField(required=False, default=0)
+    calibration_frequency = serializers.IntegerField(required=False, default=0)
     responsible_details = ResponsablesSerializer(source='responsible', read_only=True)
     site_details = SedesSerializer(source='site', read_only=True)
     service_details = ServiciosSerializer(source='service', read_only=True)

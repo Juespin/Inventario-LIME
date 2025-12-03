@@ -1,0 +1,16 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 02, 2025 - 11:04:49
+Django version 4.2, using settings 'backend_lime.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 02, 2025 - 11:12:26
+Django version 4.2, using settings 'backend_lime.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+

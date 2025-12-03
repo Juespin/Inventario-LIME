@@ -1,0 +1,79 @@
+Watching for file changes with StatReloader
+D:\Proyecto3-software\Inventario-LIME\backend\env\Lib\site-packages\rest_framework_simplejwt\__init__.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import DistributionNotFound, get_distribution
+Bad Request: /api/equipos/
+[02/Dec/2025 11:08:17] "POST /api/equipos/ HTTP/1.1" 400 205
+D:\Proyecto3-software\Inventario-LIME\backend\equipos\models.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Proyecto3-software\Inventario-LIME\backend\env\Lib\site-packages\rest_framework_simplejwt\__init__.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import DistributionNotFound, get_distribution
+D:\Proyecto3-software\Inventario-LIME\backend\equipos\models.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Proyecto3-software\Inventario-LIME\backend\env\Lib\site-packages\rest_framework_simplejwt\__init__.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import DistributionNotFound, get_distribution
+[02/Dec/2025 11:15:23] "POST /api/token/ HTTP/1.1" 200 699
+[02/Dec/2025 11:15:46] "POST /api/token/ HTTP/1.1" 200 699
+Bad Request: /api/equipos/
+[02/Dec/2025 11:15:47] "POST /api/equipos/ HTTP/1.1" 400 83
+Unauthorized: /api/equipos/
+Unauthorized: /api/sedes/
+[02/Dec/2025 12:24:37] "GET /api/equipos/ HTTP/1.1" 401 58
+Unauthorized: /api/responsables/
+[02/Dec/2025 12:24:37] "GET /api/sedes/ HTTP/1.1" 401 58
+Unauthorized: /api/servicios/
+[02/Dec/2025 12:24:37] "GET /api/responsables/ HTTP/1.1" 401 58
+Unauthorized: /api/equipos/
+[02/Dec/2025 12:24:37] "GET /api/servicios/ HTTP/1.1" 401 58
+Unauthorized: /api/sedes/
+[02/Dec/2025 12:24:37] "GET /api/equipos/ HTTP/1.1" 401 58
+Unauthorized: /api/responsables/
+[02/Dec/2025 12:24:37] "GET /api/sedes/ HTTP/1.1" 401 58
+Unauthorized: /api/servicios/
+[02/Dec/2025 12:24:37] "GET /api/responsables/ HTTP/1.1" 401 58
+[02/Dec/2025 12:24:37] "GET /api/servicios/ HTTP/1.1" 401 58
+[02/Dec/2025 12:30:24] "OPTIONS /api/token/ HTTP/1.1" 200 0
+[02/Dec/2025 12:30:25] "POST /api/token/ HTTP/1.1" 200 679
+[02/Dec/2025 12:30:25] "OPTIONS /api/equipos/ HTTP/1.1" 200 0
+[02/Dec/2025 12:30:25] "OPTIONS /api/sedes/ HTTP/1.1" 200 0
+[02/Dec/2025 12:30:25] "OPTIONS /api/responsables/ HTTP/1.1" 200 0
+[02/Dec/2025 12:30:25] "OPTIONS /api/servicios/ HTTP/1.1" 200 0
+[02/Dec/2025 12:30:25] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:30:25] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:30:25] "GET /api/equipos/ HTTP/1.1" 200 6407
+[02/Dec/2025 12:30:25] "GET /api/servicios/ HTTP/1.1" 200 91
+[02/Dec/2025 12:36:15] "POST /api/token/ HTTP/1.1" 200 679
+[02/Dec/2025 12:36:16] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:36:16] "GET /api/equipos/ HTTP/1.1" 200 6407
+[02/Dec/2025 12:36:16] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:36:16] "GET /api/servicios/ HTTP/1.1" 200 91
+[02/Dec/2025 12:37:07] "POST /api/token/ HTTP/1.1" 200 699
+[02/Dec/2025 12:37:07] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:37:07] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:37:07] "GET /api/servicios/ HTTP/1.1" 200 91
+[02/Dec/2025 12:37:07] "GET /api/equipos/ HTTP/1.1" 200 6407
+[02/Dec/2025 12:37:42] "GET /api/equipos/4/ HTTP/1.1" 200 3122
+[02/Dec/2025 12:38:20] "GET /api/equipos/4/ HTTP/1.1" 200 3122
+[02/Dec/2025 12:38:31] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:38:31] "GET /api/servicios/ HTTP/1.1" 200 91
+[02/Dec/2025 12:38:31] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:38:31] "GET /api/equipos/ HTTP/1.1" 200 6407
+[02/Dec/2025 12:38:31] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:38:31] "GET /api/servicios/ HTTP/1.1" 200 91
+[02/Dec/2025 12:38:31] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:38:31] "GET /api/equipos/ HTTP/1.1" 200 6407
+[02/Dec/2025 12:38:39] "OPTIONS /api/equipos/5/ HTTP/1.1" 200 0
+[02/Dec/2025 12:38:39] "GET /api/equipos/5/ HTTP/1.1" 200 3282
+[02/Dec/2025 12:38:44] "GET /api/equipos/5/ HTTP/1.1" 200 3282
+[02/Dec/2025 12:39:15] "PATCH /api/equipos/5/ HTTP/1.1" 200 3262
+[02/Dec/2025 12:39:56] "GET /api/equipos/5/ HTTP/1.1" 200 3262
+[02/Dec/2025 12:44:35] "GET /api/equipos/4/ HTTP/1.1" 200 3122
+[02/Dec/2025 12:46:29] "GET /api/equipos/4/ HTTP/1.1" 200 3122
+[02/Dec/2025 12:47:11] "GET /api/equipos/4/ HTTP/1.1" 200 3122
+[02/Dec/2025 12:48:08] "GET /api/equipos/ HTTP/1.1" 200 6387
+[02/Dec/2025 12:48:08] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:48:08] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:48:08] "GET /api/servicios/ HTTP/1.1" 200 91
+[02/Dec/2025 12:48:08] "GET /api/equipos/ HTTP/1.1" 200 6387
+[02/Dec/2025 12:48:08] "GET /api/sedes/ HTTP/1.1" 200 95
+[02/Dec/2025 12:48:08] "GET /api/responsables/ HTTP/1.1" 200 52
+[02/Dec/2025 12:48:08] "GET /api/servicios/ HTTP/1.1" 200 91
