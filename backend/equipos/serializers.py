@@ -53,6 +53,8 @@ class EquiposSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'display', 'full']
         extra_kwargs = {
             # accept partial payloads from the frontend; DB-level integrity still applies
+            'ecri_code': {'required': False, 'allow_blank': True},  # Permitir vacío, se generará automáticamente si falta
+            'responsible': {'required': False, 'allow_null': True},  # Permitir null temporalmente
             'misional_classification': {'required': False, 'allow_blank': True},
             'ips_classification': {'required': False, 'allow_blank': True},
             'risk_classification': {'required': False, 'allow_blank': True},
@@ -99,3 +101,41 @@ class EquiposSerializer(serializers.ModelSerializer):
 
     def get_full(self, obj):
         return obj.as_dict()
+    
+    def validate(self, data):
+        """Validación personalizada para asegurar campos requeridos"""
+        # Si ecri_code está vacío, generar uno automáticamente
+        if not data.get('ecri_code') or (isinstance(data.get('ecri_code'), str) and not data.get('ecri_code').strip()):
+            inventory_code = data.get('inventory_code', '')
+            if inventory_code:
+                data['ecri_code'] = f'ECRI-{inventory_code}'
+            else:
+                # Si no hay inventory_code, generar uno temporal
+                import uuid
+                data['ecri_code'] = f'ECRI-{str(uuid.uuid4())[:8].upper()}'
+        
+        # Si responsible es None o 0, usar el primer responsable disponible
+        responsible = data.get('responsible')
+        if not responsible:
+            from responsables.models import Responsable
+            first_responsible = Responsable.objects.first()
+            if first_responsible:
+                # Asignar la instancia directamente, no el ID
+                data['responsible'] = first_responsible
+            else:
+                raise serializers.ValidationError({
+                    'responsible': 'Debe especificar un responsable. Por favor, cree al menos un responsable primero.'
+                })
+        # Si responsible es un ID (int), convertirlo a instancia
+        elif isinstance(responsible, int):
+            from responsables.models import Responsable
+            try:
+                responsable_instance = Responsable.objects.get(id=responsible)
+                data['responsible'] = responsable_instance
+            except Responsable.DoesNotExist:
+                raise serializers.ValidationError({
+                    'responsible': f'El responsable con ID {responsible} no existe.'
+                })
+        # Si ya es una instancia, dejarlo como está
+        
+        return data

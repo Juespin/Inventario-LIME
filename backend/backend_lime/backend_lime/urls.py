@@ -17,15 +17,16 @@ router.register(r'servicios', ServiciosViewSet)
 
 # URLs de la API
 urlpatterns = [
-    path('', include(router.urls)),  # Ruta raíz redirige a la API
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    # Incluir URLs de equipos (incluye endpoints de mantenimiento)
-    path('api/', include('equipos.urls')),
+    # Incluir URLs de equipos ANTES del router para que las rutas personalizadas tengan prioridad
+    path('api/equipos/', include('equipos.urls')),
     # Incluir URLs de usuarios (incluye token personalizado y registro)
     path('api/', include('users.urls')),
     # JWT token refresh endpoint
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # Router de DRF (debe ir después de las rutas personalizadas)
+    path('', include(router.urls)),  # Ruta raíz redirige a la API
+    path('api/', include(router.urls)),
     # Añadir la autenticación de la API
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

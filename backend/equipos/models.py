@@ -140,5 +140,11 @@ class Equipos(models.Model):
         data = self.as_dict()
         lines = [f"{k}: {v}" for k, v in data.items()]
         return "\n".join(lines)
-        
+
+class EquipoDocumento(models.Model):
+    equipo = models.ForeignKey(Equipos, on_delete=models.CASCADE, related_name='documentos')
+    nombre = models.CharField(max_length=100)
+    archivo = models.FileField(upload_to='documentos_equipos/')
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+
 

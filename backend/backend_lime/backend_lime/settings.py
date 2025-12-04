@@ -85,12 +85,8 @@ WSGI_APPLICATION = 'backend_lime.wsgi.application'
 # =======================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'PORT': 3306,
-        'USER': 'root',
-        'PASSWORD': '',
-        'NAME': 'lime_db',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
