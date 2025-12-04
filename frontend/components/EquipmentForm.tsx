@@ -156,30 +156,50 @@ export const EquipmentForm: React.FC<EquipmentFormProps> = ({ equipment, onSave,
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setFormData(equipment)
+    setFormData(equipment);
+    if (!equipment.documents || equipment.documents.length === 0) {
+      setFormData(prev => ({
+        ...prev,
+        documents: [
+          { name: 'Hoja de vida', hasDocument: false },
+          { name: 'Registro de Importación', hasDocument: false },
+          { name: 'Manual de operación', hasDocument: false },
+          { name: 'Manual de servicio de mantenimiento', hasDocument: false },
+          { name: 'Guía rápida de uso', hasDocument: false },
+          { name: 'Instructivo de manejo rápido de equipos', hasDocument: false },
+          { name: 'Protocolo de mantenimiento preventivo', hasDocument: false },
+          { name: 'Frecuencia metrológica según fabricante', hasDocument: false },
+        ]
+      }));
+    }
   }, [equipment]);
-  
-  useEffect(() => {
-    if (formData.siteId) {
-      setFilteredServices(services.filter(s => s.siteId === formData.siteId));
-    } else {
-      setFilteredServices([]);
-    }
-  }, [formData.siteId, services]);
 
   useEffect(() => {
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    let docs = equipment.documents;
+    if (!docs || docs.length === 0) {
+      docs = [
+        { name: 'Hoja de vida', hasDocument: false },
+        { name: 'Registro de Importación', hasDocument: false },
+        { name: 'Manual de operación', hasDocument: false },
+        { name: 'Manual de servicio de mantenimiento', hasDocument: false },
+        { name: 'Guía rápida de uso', hasDocument: false },
+        { name: 'Instructivo de manejo rápido de equipos', hasDocument: false },
+        { name: 'Protocolo de mantenimiento preventivo', hasDocument: false },
+        { name: 'Frecuencia metrológica según fabricante', hasDocument: false },
+      ];
     }
-  }, [hasDocument]);
+    setFormData({ ...equipment, documents: docs });
+  }, [equipment]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    if (name === 'serial' || name === 'inventoryCode') {
-      const numericValue = value.replace(/[^0-9]/g, '');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type, checked } = e.target;
+    const numericValue = parseInt(value);
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: checked }));
+    } else if (!isNaN(numericValue)) {
       setFormData(prev => ({ ...prev, [name]: numericValue }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: name.endsWith('Id') ? parseInt(value) : value }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 

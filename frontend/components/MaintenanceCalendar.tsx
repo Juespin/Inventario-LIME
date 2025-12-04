@@ -1,32 +1,149 @@
-import React, { useState, useMemo } from 'react';
-import { Calendar, Clock, AlertTriangle, CheckCircle, Wrench, Gauge, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Calendar, Clock, AlertTriangle, CheckCircle, Wrench, Gauge, Filter, ChevronLeft, ChevronRight, Edit2 } from 'lucide-react';
 import { Equipment, Site, Service, Responsible, MaintenanceEvent, MaintenanceType } from '../types';
-import { generateMaintenanceEvents, sortEventsByUrgency, formatDaysRemaining } from '../utils/maintenance';
+import { sortEventsByUrgency, formatDaysRemaining } from '../utils/maintenance';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Tooltip } from './Tooltip';
+import api from '../src/services/api';
 
 interface MaintenanceCalendarProps {
     equipments: Equipment[];
     sites: Site[];
     services: Service[];
     responsibles: Responsible[];
+    onUpdateMaintenanceDate?: (equipmentId: number, date: string) => Promise<void>;
+    onUpdateCalibrationDate?: (equipmentId: number, date: string) => Promise<void>;
+    showToast?: (message: string, type: 'success' | 'error' | 'warning' | 'info') => void;
 }
 
 export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
     equipments,
     sites,
     services,
-    responsibles
+    responsibles,
+    onUpdateMaintenanceDate,
+    onUpdateCalibrationDate,
+    showToast
 }) => {
     const [view, setView] = useState<'list' | 'calendar'>('list');
     const [filterType, setFilterType] = useState<MaintenanceType | 'all'>('all');
     const [filterStatus, setFilterStatus] = useState<'all' | 'upcoming' | 'due' | 'overdue'>('all');
     const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [allEvents, setAllEvents] = useState<MaintenanceEvent[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(true);
+    const [editingEvent, setEditingEvent] = useState<{ id: string; type: MaintenanceType; equipmentId: string } | null>(null);
+    const [editDate, setEditDate] = useState('');
 
-    // Generar eventos de mantenimiento
-    const allEvents = useMemo(() => {
-        return generateMaintenanceEvents(equipments);
-    }, [equipments]);
+    // Cargar eventos desde el backend
+    useEffect(() => {
+        const loadEvents = async () => {
+            try {
+                setLoadingEvents(true);
+                const response = await api.get('/api/equipos/maintenance-events/');
+                const backendEvents = response.data || [];
+                
+                // Mapear eventos del backend al formato del frontend
+                const mappedEvents: MaintenanceEvent[] = backendEvents.map((event: any) => ({
+                    id: event.id,
+                    equipmentId: event.equipmentId ? String(event.equipmentId) : '',
+                    equipmentName: event.equipmentName || '',
+                    inventoryCode: event.inventoryCode || '',
+                    type: event.type as MaintenanceType,
+                    lastDate: event.lastDate || '',
+                    nextDate: event.nextDate || '',
+                    frequency: event.frequency || 0,
+                    daysRemaining: event.daysRemaining || 0,
+                    status: event.status as 'upcoming' | 'due' | 'overdue',
+                    siteId: event.siteId || 0,
+                    serviceId: event.serviceId || 0,
+                    responsibleId: event.responsibleId || 0,
+                }));
+                
+                setAllEvents(mappedEvents);
+            } catch (error: any) {
+                console.error('Error cargando eventos de mantenimiento:', error);
+                if (showToast) {
+                    showToast('Error al cargar eventos de mantenimiento', 'error');
+                }
+                setAllEvents([]);
+            } finally {
+                setLoadingEvents(false);
+            }
+        };
+
+        loadEvents();
+    }, [showToast]);
+
+    // Función para actualizar fecha de mantenimiento o calibración
+    const handleUpdateDate = async (event: MaintenanceEvent, newDate: string) => {
+        try {
+            // El equipmentId del evento es el backendId (ID numérico del backend)
+            // Intentar encontrar el equipo por backendId primero, luego por id
+            const backendId = parseInt(event.equipmentId, 10);
+            
+            if (isNaN(backendId)) {
+                if (showToast) {
+                    showToast('No se pudo identificar el equipo', 'error');
+                }
+                return;
+            }
+
+            if (event.type === 'maintenance') {
+                if (onUpdateMaintenanceDate) {
+                    await onUpdateMaintenanceDate(backendId, newDate);
+                } else {
+                    // Fallback: llamar directamente al API
+                    await api.post('/api/equipos/update-maintenance-date/', {
+                        equipment_id: backendId,
+                        date: newDate
+                    });
+                }
+                if (showToast) {
+                    showToast(`Fecha de mantenimiento actualizada para ${event.equipmentName}`, 'success');
+                }
+            } else {
+                if (onUpdateCalibrationDate) {
+                    await onUpdateCalibrationDate(backendId, newDate);
+                } else {
+                    // Fallback: llamar directamente al API
+                    await api.post('/api/equipos/update-calibration-date/', {
+                        equipment_id: backendId,
+                        date: newDate
+                    });
+                }
+                if (showToast) {
+                    showToast(`Fecha de calibración actualizada para ${event.equipmentName}`, 'success');
+                }
+            }
+
+            // Recargar eventos
+            const response = await api.get('/api/equipos/maintenance-events/');
+            const backendEvents = response.data || [];
+            const mappedEvents: MaintenanceEvent[] = backendEvents.map((e: any) => ({
+                id: e.id,
+                equipmentId: e.equipmentId ? String(e.equipmentId) : '',
+                equipmentName: e.equipmentName || '',
+                inventoryCode: e.inventoryCode || '',
+                type: e.type as MaintenanceType,
+                lastDate: e.lastDate || '',
+                nextDate: e.nextDate || '',
+                frequency: e.frequency || 0,
+                daysRemaining: e.daysRemaining || 0,
+                status: e.status as 'upcoming' | 'due' | 'overdue',
+                siteId: e.siteId || 0,
+                serviceId: e.serviceId || 0,
+                responsibleId: e.responsibleId || 0,
+            }));
+            setAllEvents(mappedEvents);
+            setEditingEvent(null);
+            setEditDate('');
+        } catch (error: any) {
+            console.error('Error actualizando fecha:', error);
+            if (showToast) {
+                showToast(`Error al actualizar fecha: ${error?.response?.data?.error || error.message}`, 'error');
+            }
+        }
+    };
 
     // Filtrar eventos
     const filteredEvents = useMemo(() => {
@@ -71,6 +188,13 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
 
     const getTypeLabel = (type: MaintenanceType) => {
         return type === 'maintenance' ? 'Mantenimiento' : 'Calibración';
+    };
+
+    const getTypeColor = (type: MaintenanceType) => {
+        // Mantenimiento: azul, Calibración: verde
+        return type === 'maintenance'
+            ? 'bg-blue-100 text-blue-800 border-blue-300'
+            : 'bg-green-100 text-green-800 border-green-300';
     };
 
     const formatDate = (dateString: string) => {
@@ -193,13 +317,13 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
         <div>
             <Breadcrumbs 
                 items={[
-                    { label: 'Calendario de Mantenimientos', onClick: undefined }
+                    { label: 'Calendario de Mantenimientos y Calibraciones', onClick: undefined }
                 ]}
             />
 
             {/* Header con estadísticas */}
             <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">Calendario de Mantenimientos</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">Calendario de Mantenimientos y Calibraciones</h1>
                 <p className="text-gray-600 mb-4">Gestiona y visualiza los próximos mantenimientos y calibraciones</p>
 
                 {/* Tarjetas de estadísticas */}
@@ -299,13 +423,19 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
             {/* Contenido según vista */}
             {view === 'list' ? (
                 <div className="bg-white rounded-lg shadow-md border border-gray-200">
-                    {filteredEvents.length > 0 ? (
+                    {loadingEvents ? (
+                        <div className="p-12 text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <p className="text-gray-600">Cargando eventos de mantenimiento...</p>
+                        </div>
+                    ) : filteredEvents.length > 0 ? (
                         <div className="divide-y divide-gray-200">
                             {filteredEvents.map(event => {
                                 const TypeIcon = getTypeIcon(event.type);
                                 const site = sites.find(s => s.id === event.siteId);
                                 const service = services.find(s => s.id === event.serviceId);
                                 const responsible = responsibles.find(r => r.id === event.responsibleId);
+                                const isEditing = editingEvent?.id === event.id;
 
                                 return (
                                     <div
@@ -354,13 +484,62 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
                                                         </span>
                                                     )}
                                                 </div>
+
+                                                {/* Formulario de edición */}
+                                                {isEditing && (
+                                                    <div className="mt-4 ml-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                                        <p className="text-sm font-semibold text-gray-700 mb-2">
+                                                            Actualizar fecha de {getTypeLabel(event.type).toLowerCase()}:
+                                                        </p>
+                                                        <div className="flex gap-2 flex-wrap">
+                                                            <input
+                                                                type="date"
+                                                                value={editDate}
+                                                                onChange={(e) => setEditDate(e.target.value)}
+                                                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            />
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (editDate) {
+                                                                        handleUpdateDate(event, editDate);
+                                                                    }
+                                                                }}
+                                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                                                            >
+                                                                Guardar
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setEditingEvent(null);
+                                                                    setEditDate('');
+                                                                }}
+                                                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                                            >
+                                                                Cancelar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div className="flex flex-col sm:items-end gap-2">
-                                                <div className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(event.status)}`}>
-                                                    {event.status === 'overdue' ? 'Vencido' :
-                                                     event.status === 'due' ? 'Próximo' :
-                                                     'Programado'}
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            setEditingEvent({ id: event.id, type: event.type, equipmentId: event.equipmentId });
+                                                            setEditDate(event.lastDate || new Date().toISOString().split('T')[0]);
+                                                        }}
+                                                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        title="Editar fecha"
+                                                        aria-label="Editar fecha"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <div className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(event.status)}`}>
+                                                        {event.status === 'overdue' ? 'Vencido' :
+                                                         event.status === 'due' ? 'Próximo' :
+                                                         'Programado'}
+                                                    </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-sm font-semibold text-gray-700">Próximo mes:</p>
@@ -543,11 +722,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
                                                     return (
                                                         <div
                                                             key={event.id}
-                                                            className={`text-xs px-1 py-0.5 rounded truncate ${
-                                                                event.status === 'overdue' ? 'bg-red-100 text-red-800 border border-red-300' :
-                                                                event.status === 'due' ? 'bg-amber-100 text-amber-800 border border-amber-300' :
-                                                                'bg-blue-100 text-blue-800 border border-blue-300'
-                                                            }`}
+                                                            className={`text-xs px-1 py-0.5 rounded truncate border ${getTypeColor(event.type)}`}
                                                             title={`${event.equipmentName} - ${getTypeLabel(event.type)} - ${statusLabel}`}
                                                         >
                                                             <div className="flex items-center gap-1">
@@ -584,7 +759,11 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
-                                <span className="font-medium">Programado</span>
+                                <span className="font-medium">Mantenimiento</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
+                                <span className="font-medium">Calibración</span>
                             </div>
                         </div>
                         <div className="text-center">

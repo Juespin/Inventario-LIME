@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
@@ -98,11 +97,20 @@ const App: React.FC = () => {
                         // placeholder image when backend doesn't provide one
                         imageUrl: e.image_url || `https://picsum.photos/seed/${encodeURIComponent(e.inventory_code || e.name || e.id)}/400/300`,
                         documents: [],
-                        generalInfo: {},
-                        historicalRecord: {},
-                        operatingConditions: {},
-                        decommissionInfo: undefined,
-                        transferHistory: [],
+                        invimaRecord: e.invima_record || '',
+                        riskClassification: e.risk_classification || '',
+                        generalInfo: {
+                            ...((e.generalInfo || {}) as any),
+                            ipsCode: e.ips_code,
+                            ecriCode: e.ecri_code,
+                            physicalLocation: e.physical_location,
+                            misionalClassification: e.misional_classification,
+                            ipsClassification: e.ips_classification,
+                            riskClassification: e.risk_classification,
+                            invimaRecord: e.invima_record,
+                            comercializationPermit: e.comercialization_permit,
+                            noAplica: e.no_aplica
+                        },
                     }));
                     setEquipments(mapped);
                 }
@@ -146,8 +154,8 @@ const App: React.FC = () => {
         site: eq.siteId || null,
         service: eq.serviceId || null,
         ips_code: eq.generalInfo?.ipsCode || '',
-        ecri_code: eq.generalInfo?.ecriCode || '',
-        responsible: eq.responsibleId || null,
+        ecri_code: eq.generalInfo?.ecriCode || (eq.inventoryCode ? `ECRI-${eq.inventoryCode}` : 'ECRI-DEFAULT'), // Campo requerido
+        responsible: eq.responsibleId || null, // Campo requerido - debe ser proporcionado por el usuario
         physical_location: eq.generalInfo?.physicalLocation || '',
         misional_classification: Array.isArray(eq.generalInfo?.misionalClassification) ? (eq.generalInfo?.misionalClassification || []).join(', ') : eq.generalInfo?.misionalClassification || '',
         ips_classification: eq.generalInfo?.ipsClassification || '',
@@ -164,10 +172,19 @@ const App: React.FC = () => {
         acquisition_method: eq.historicalRecord?.acquisitionMethod || '',
         document_type: eq.historicalRecord?.documentType || '',
         document_number: eq.historicalRecord?.documentNumber || '',
+        has_life_sheet: !!eq.documents?.find(d => d.name === 'life_sheet')?.hasDocument || false,
+        has_import_registration: !!eq.documents?.find(d => d.name === 'import_registration')?.hasDocument || false,
+        has_operation_manual: !!eq.documents?.find(d => d.name === 'operation_manual')?.hasDocument || false,
+        has_maintenance_manual: !!eq.documents?.find(d => d.name === 'maintenance_manual')?.hasDocument || false,
+        has_quick_guide: !!eq.documents?.find(d => d.name === 'quick_guide')?.hasDocument || false,
+        has_instruction_manual: !!eq.documents?.find(d => d.name === 'instruction_manual')?.hasDocument || false,
+        has_maintenance_protocol: !!eq.documents?.find(d => d.name === 'maintenance_protocol')?.hasDocument || false,
         maintenance_required: !!eq.metrologicalAdminInfo?.maintenance,
         maintenance_frequency: eq.metrologicalAdminInfo?.maintenanceFrequency || null,
+        last_maintenance_date: eq.metrologicalAdminInfo?.lastMaintenanceDate || null,
         calibration_required: !!eq.metrologicalAdminInfo?.calibration,
         calibration_frequency: eq.metrologicalAdminInfo?.calibrationFrequency || null,
+        last_calibration_date: eq.metrologicalAdminInfo?.lastCalibrationDate || null,
         magnitude: eq.metrologicalTechnicalInfo?.magnitude || '',
         measurement_range: (eq.metrologicalTechnicalInfo?.equipmentRangeMin || '') && (eq.metrologicalTechnicalInfo?.equipmentRangeMax || '') ? `${eq.metrologicalTechnicalInfo?.equipmentRangeMin}-${eq.metrologicalTechnicalInfo?.equipmentRangeMax}` : (eq.metrologicalTechnicalInfo?.equipmentRangeMin || eq.metrologicalTechnicalInfo?.equipmentRangeMax || ''),
         resolution: eq.metrologicalTechnicalInfo?.resolution || '',
@@ -186,6 +203,9 @@ const App: React.FC = () => {
         try {
             // prepare payload for backend
             const payload = mapFrontendToBackend(equipmentToSave);
+            
+            // Debug: mostrar el payload que se está enviando
+            console.log('Payload a enviar:', JSON.stringify(payload, null, 2));
 
             if ((equipmentToSave as any).backendId) {
                 // update existing (use PATCH to allow partial updates)
@@ -206,15 +226,67 @@ const App: React.FC = () => {
                 setEquipments(prev => prev.map(eq => ((eq as any).backendId === backendId ? updated : eq)));
                 showToast(`Equipo "${updated.name}" actualizado exitosamente`, 'success');
             } else {
-                // create new
-                const res = await api.post('/api/equipos/', payload);
+                // create new - limpiar valores vacíos antes de enviar
+                const cleaned: any = {};
+                Object.entries(payload).forEach(([k, v]) => {
+                    // Mantener valores booleanos (incluyendo false)
+                    if (v === false || v === true) {
+                        cleaned[k] = v;
+                    }
+                    // Mantener números (incluyendo 0)
+                    else if (typeof v === 'number') {
+                        cleaned[k] = v;
+                    }
+                    // Mantener arrays no vacíos
+                    else if (Array.isArray(v) && v.length > 0) {
+                        cleaned[k] = v;
+                    }
+                    // Mantener strings no vacíos y valores no nulos
+                    else if (v !== undefined && v !== null && v !== '') {
+                        // Si es string, verificar que no esté vacío después de trim
+                        if (typeof v === 'string' && v.trim() !== '') {
+                            cleaned[k] = v;
+                        } else if (typeof v !== 'string') {
+                            cleaned[k] = v;
+                        }
+                    }
+                });
+                
+                console.log('Payload limpio a enviar:', JSON.stringify(cleaned, null, 2));
+                const res = await api.post('/api/equipos/', cleaned);
                 const created = mapBackendToFrontend(res.data);
                 setEquipments(prev => [created, ...prev]);
                 showToast(`Equipo "${created.name}" registrado exitosamente`, 'success');
             }
         } catch (err: any) {
             console.error('Error saving equipment', err);
-            showToast(`Error al guardar equipo: ${err?.message || err}`, 'error');
+            // Mostrar el mensaje de error específico del backend si está disponible
+            let errorMessage = 'Error al guardar equipo';
+            if (err?.response?.data) {
+                const errorData = err.response.data;
+                if (typeof errorData === 'string') {
+                    errorMessage = errorData;
+                } else if (errorData.detail) {
+                    errorMessage = errorData.detail;
+                } else if (errorData.error) {
+                    errorMessage = errorData.error;
+                } else {
+                    // Si hay errores de validación, mostrarlos
+                    const validationErrors = Object.entries(errorData)
+                        .map(([field, messages]: [string, any]) => {
+                            const msg = Array.isArray(messages) ? messages.join(', ') : messages;
+                            return `${field}: ${msg}`;
+                        })
+                        .join('; ');
+                    if (validationErrors) {
+                        errorMessage = `Errores de validación: ${validationErrors}`;
+                    }
+                }
+            } else if (err?.message) {
+                errorMessage = err.message;
+            }
+            console.error('Error details:', err?.response?.data);
+            showToast(errorMessage, 'error');
         }
     };
 
@@ -467,6 +539,77 @@ const App: React.FC = () => {
                             sites={sites}
                             services={services}
                             responsibles={responsibles}
+                            onUpdateMaintenanceDate={async (equipmentId: number, date: string) => {
+                                try {
+                                    await api.post('/api/equipos/update-maintenance-date/', {
+                                        equipment_id: equipmentId,
+                                        date: date
+                                    });
+                                    // Recargar equipos para actualizar datos
+                                    const res = await api.get('/api/equipos/');
+                                    const backendEquipments = res.data || [];
+                                    const mapped = backendEquipments.map((e: any) => ({
+                                        id: e.inventory_code ? String(e.inventory_code) : String(e.id),
+                                        backendId: e.id || null,
+                                        name: e.name || '',
+                                        brand: e.brand || '',
+                                        model: e.model || '',
+                                        serial: e.serial || '',
+                                        inventoryCode: e.inventory_code || e.ips_code || '',
+                                        status: e.status || 'Activo',
+                                        siteId: e.site || e.site_id || 0,
+                                        serviceId: e.service || e.service_id || 0,
+                                        responsibleId: e.responsible || e.responsible_id || 0,
+                                        imageUrl: e.image_url || `https://picsum.photos/seed/${encodeURIComponent(e.inventory_code || e.name || e.id)}/400/300`,
+                                        documents: [],
+                                        generalInfo: {},
+                                        historicalRecord: {},
+                                        operatingConditions: {},
+                                        decommissionInfo: undefined,
+                                        transferHistory: [],
+                                    }));
+                                    setEquipments(mapped);
+                                } catch (err: any) {
+                                    console.error('Error updating maintenance date', err);
+                                    throw err;
+                                }
+                            }}
+                            onUpdateCalibrationDate={async (equipmentId: number, date: string) => {
+                                try {
+                                    await api.post('/api/equipos/update-calibration-date/', {
+                                        equipment_id: equipmentId,
+                                        date: date
+                                    });
+                                    // Recargar equipos para actualizar datos
+                                    const res = await api.get('/api/equipos/');
+                                    const backendEquipments = res.data || [];
+                                    const mapped = backendEquipments.map((e: any) => ({
+                                        id: e.inventory_code ? String(e.inventory_code) : String(e.id),
+                                        backendId: e.id || null,
+                                        name: e.name || '',
+                                        brand: e.brand || '',
+                                        model: e.model || '',
+                                        serial: e.serial || '',
+                                        inventoryCode: e.inventory_code || e.ips_code || '',
+                                        status: e.status || 'Activo',
+                                        siteId: e.site || e.site_id || 0,
+                                        serviceId: e.service || e.service_id || 0,
+                                        responsibleId: e.responsible || e.responsible_id || 0,
+                                        imageUrl: e.image_url || `https://picsum.photos/seed/${encodeURIComponent(e.inventory_code || e.name || e.id)}/400/300`,
+                                        documents: [],
+                                        generalInfo: {},
+                                        historicalRecord: {},
+                                        operatingConditions: {},
+                                        decommissionInfo: undefined,
+                                        transferHistory: [],
+                                    }));
+                                    setEquipments(mapped);
+                                } catch (err: any) {
+                                    console.error('Error updating calibration date', err);
+                                    throw err;
+                                }
+                            }}
+                            showToast={showToast}
                         />;
             default:
                 return <Dashboard 

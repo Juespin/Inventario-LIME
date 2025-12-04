@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { Equipment, Site, Service, Responsible, EquipmentFilters } from '../types';
 import { Modal } from './Modal';
@@ -195,6 +194,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Serie</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código IPS</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código Inventario</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Registro Invima</th>
+                                <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Riesgo</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Sede / Servicio</th>
                                 <th scope="col" className="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Estado</th>
                                 <th scope="col" className="relative px-4 lg:px-6 py-3 lg:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
@@ -217,6 +218,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ equipments, sites, service
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.serial}</td>
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.generalInfo?.ipsCode || 'N/A'}</td>
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm font-semibold ${isInactive ? 'text-gray-400' : 'text-gray-900'}`}>{equipment.inventoryCode}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.invimaRecord || equipment.generalInfo?.invimaRecord || 'N/A'}</td>
+                                        <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{equipment.riskClassification || equipment.generalInfo?.riskClassification || 'N/A'}</td>
                                         <td className={`px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm ${isInactive ? 'text-gray-300' : 'text-gray-600'}`}>{siteName} / {serviceName}</td>
                                         <td className="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap">
                                             <StatusBadge status={equipment.status} />
